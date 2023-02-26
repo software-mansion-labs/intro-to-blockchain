@@ -1,5 +1,5 @@
 
-from simple_cryptography import PublicKey, Signature, sign, verify_signature
+from simple_cryptography import PublicKey, sign, verify_signature, generate_key_pair
 
 
 UMOWA = """
@@ -17,10 +17,11 @@ class Alice:
         """
         TODO - wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography
         """
-        self._private_key = "TODO"
-        self._public_key = "TODO"
+        (pub, priv) = generate_key_pair()
+        self._private_key = priv
+        self._public_key = pub
 
-    def sign(self) -> Signature:
+    def sign(self) -> bytes:
         """
         TODO - zaimplementuj metodę która podpisuje publiczną umowę - `UMOWA`
         Przydadzą ci się funkcje/metody
@@ -28,8 +29,8 @@ class Alice:
             - hash
             - sign
         """
-
-        raise NotImplementedError()
+        hashed = bytes(UMOWA, 'utf-8')
+        return sign(self._private_key, hashed)
 
     
     def get_public_key(self) -> PublicKey:
@@ -40,13 +41,14 @@ class Bob:
     def __init__(self, alice: Alice): 
         self.alice = alice
 
-    def validate_signature(self) -> bool:
+    def validate_signature(self, signature) -> bool:
         """
         TODO - zaimplementuj metodę która weryfikuje czy to Alice podpisała umowę
         Przydadzą ci się funkcje/metody
+            - self.alice.get_public_key()
             - bytes(string, 'utf-8')
             - hash
             - verify_signature
         """
-
-        raise NotImplementedError()
+        hashed = bytes(UMOWA, 'utf-8')
+        return verify_signature(self.alice.get_public_key(), signature, hashed)
