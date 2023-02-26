@@ -2,11 +2,12 @@
 This module is for educational purposes only
 Do not use it as a cryptography library
 """
-from typing import Tuple
+from typing import Any, Tuple
 from attr import dataclass
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.exceptions import InvalidSignature
 
 
 def hash(value: bytes) -> bytes:
@@ -50,3 +51,33 @@ def asymmetric_decrypt(private_key: PrivateKey, encrypted_message: bytes) -> byt
         )
     )
     return plaintext
+
+class Signature:
+    value: Any
+
+def sign(private_key: PrivateKey, message: bytes) -> bytes:
+    signature = private_key.value.sign(
+        message,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    return signature
+
+def verify_signature(public_key: PublicKey, signature: Signature, message: bytes) -> bool:
+    try:
+        public_key.value.verify(
+            signature.value,
+            message,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+
+    except InvalidSignature:
+        return False
+    return True
