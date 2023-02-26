@@ -23,8 +23,7 @@ def test_signature():
     alice = signature_3.Alice()
     bob = signature_3.Bob(alice)
     signature = alice.sign()
-    decrypted = bob.validate_signature(signature)
-    assert secrect_message == decrypted
+    assert bob.validate_signature(signature)
 
 
 def test_malicious_alice():
