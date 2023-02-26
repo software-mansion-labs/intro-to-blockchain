@@ -29,12 +29,12 @@ class Bob:
     def get_public_key(self):
         return self._public_key
 
-    def decrypt(self, encrypted_message) -> str:
+    def decrypt(self, encrypted_message: bytes) -> str:
         """
         TODO - zaimplementuj deszyfrowanie wiadomości
         Przydadzą ci się funkcje/metody
             - self._private_key
             - asymmetric_decrypt
-            - string.decode("utf-8") 
+            - string.decode("utf-8")
         """
         raise NotImplementedError()
