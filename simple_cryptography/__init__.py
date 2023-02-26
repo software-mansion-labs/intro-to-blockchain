@@ -52,9 +52,6 @@ def asymmetric_decrypt(private_key: PrivateKey, encrypted_message: bytes) -> byt
     )
     return plaintext
 
-class Signature:
-    value: Any
-
 def sign(private_key: PrivateKey, message: bytes) -> bytes:
     signature = private_key.value.sign(
         message,
@@ -66,10 +63,10 @@ def sign(private_key: PrivateKey, message: bytes) -> bytes:
     )
     return signature
 
-def verify_signature(public_key: PublicKey, signature: Signature, message: bytes) -> bool:
+def verify_signature(public_key: PublicKey, signature: bytes, message: bytes) -> bool:
     try:
         public_key.value.verify(
-            signature.value,
+            signature,
             message,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
