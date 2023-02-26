@@ -17,9 +17,8 @@ class Alice:
         """
         TODO - wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography
         """
-        (pub, priv) = generate_key_pair()
-        self._private_key = priv
-        self._public_key = pub
+        self._private_key = "TODO"
+        self._public_key = "TODO"
 
     def sign(self) -> bytes:
         """
@@ -29,8 +28,7 @@ class Alice:
             - hash
             - sign
         """
-        hashed = bytes(UMOWA, 'utf-8')
-        return sign(self._private_key, hashed)
+        raise NotImplementedError()
 
     
     def get_public_key(self) -> PublicKey:
@@ -50,5 +48,4 @@ class Bob:
             - hash
             - verify_signature
         """
-        hashed = bytes(UMOWA, 'utf-8')
-        return verify_signature(self.alice.get_public_key(), signature, hashed)
+        raise NotImplementedError()
