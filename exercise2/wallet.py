@@ -38,9 +38,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "transfer":
-        required = ["recipient", "amount"]       
-        if args.recipient == None or args.amount == None:
-            raise Exception("Missing one or more required arguments (-r/--recipient, -a/--amount)")
+        if args.recipient == None:
+            raise Exception("Missing one or more required arguments (-r/--recipient)")
         
         wallet.transfer(args.recipient, args.amount)
     
