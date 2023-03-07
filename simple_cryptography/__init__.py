@@ -7,7 +7,6 @@ from attr import dataclass
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives._serialization import PublicFormat, Encoding
 from cryptography.exceptions import InvalidSignature
 
 
@@ -23,9 +22,6 @@ class PrivateKey:
 @dataclass
 class PublicKey:
     value: rsa.RSAPublicKey
-
-    def public_bytes(self) -> bytes:
-        return self.value.public_bytes(Encoding.OpenSSH, PublicFormat.OpenSSH)
 
 def generate_key_pair() -> Tuple[PublicKey, PrivateKey]:
     private_key = rsa.generate_private_key(
