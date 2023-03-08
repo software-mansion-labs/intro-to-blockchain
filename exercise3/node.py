@@ -48,7 +48,6 @@ class Node:
 
     def find_nonce(self, block: Block) -> Optional[Block]:
         while int.from_bytes(block.hash, 'big') > DIFFICULTY:
-            # sleep(random.randint(1, 2) / 10)
             if self.blockchain.get_latest_block().hash != block.prev_block_hash:
                 return None
             block.nonce += 1

@@ -65,4 +65,3 @@ def test_find_nonce():
     block = node.find_nonce(block)
 
     assert int.from_bytes(block.hash, 'big') < DIFFICULTY
-
