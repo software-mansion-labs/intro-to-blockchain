@@ -17,5 +17,4 @@ class Transaction:
         wykorzystaj metodę int.to_bytes(2, 'big') oraz bytes(string, 'utf-8') do konwersji int to bytes
         bytes mozna konkatenować
         """
-        return b'\x01'
-
+        raise NotImplementedError()
