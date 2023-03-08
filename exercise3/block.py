@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from exercise1.hash_1 import Transaction
+from exercise2.transaction_registry import Transaction
 from simple_cryptography import hash
 
 
@@ -16,7 +16,7 @@ class Block:
     def hash(self):
         hashed_txs = b'\x00'
         for tx in self.transactions:
-            hashed_txs = hash(hashed_txs + tx.hash())
+            hashed_txs = hash(hashed_txs + tx.tx_hash)
 
         return hash(self.prev_block_hash +
                     self.timestamp.to_bytes(32, 'big') +
