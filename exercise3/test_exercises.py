@@ -25,8 +25,6 @@ def test_add_transaction():
 
 def test_throws_on_wrong_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
-    init_tx.signature = sign(priv1, init_tx.tx_hash)
-
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -38,8 +36,6 @@ def test_throws_on_wrong_transaction():
 
 def test_validate_chain():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
-    init_tx.signature = sign(priv1, init_tx.tx_hash)
-
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -57,8 +53,6 @@ def test_throws_on_wrong_chain():
 
 def test_find_nonce():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
-    init_tx.signature = sign(priv1, init_tx.tx_hash)
-
     node = Node(pub1, init_tx)
 
     block = Block(node.blockchain.get_latest_block().hash, 0, 0, [])
