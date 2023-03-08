@@ -19,9 +19,9 @@ class Node:
 
     def add_transaction(self, transaction: Transaction):
         """
-        Tutaj przychodzi transakcja od użytkownika lub taka przekazana przez node.
+        Tutaj przychodzi transakcja od użytkownika.
         Tworzona jest transakcja z nowym coinem i z obu powstaje blok.
-        Następuje proces kopania i po wykopaniu łańcuch jest przekazywany do innych node'ów.
+        Następuje proces kopania i po wykopaniu blok dodawany jest do łańcucha.
         """
         if not self.validate_transaction(transaction):
             raise Exception("Transaction can't be added. Verification failed.")
