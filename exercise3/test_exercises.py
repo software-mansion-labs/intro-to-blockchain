@@ -147,3 +147,15 @@ def test_find_nonce():
     block = node.find_nonce(block)
 
     assert int.from_bytes(block.hash, 'big') < MAX_256_INT >> DIFFICULTY
+
+
+def test_node_owner_gets_coin():
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
+    node = Node(pub1, init_tx)
+
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx.signature = sign(priv1, new_tx.tx_hash)
+    node.add_transaction(new_tx)
+
+    owners = [tx.recipient for tx in node.blockchain.get_latest_block().transactions]
+    assert pub1 in owners

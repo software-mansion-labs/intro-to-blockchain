@@ -96,13 +96,13 @@ def validate_chain(chain: Blockchain) -> bool:
     TODO: Zweryfikuj poprawność łańcucha.
     Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
     - hash poprzedniego bloku jest przypisany prawidłowo,
-    - wykonano proof of work (hash bloku spełnia kryterium, jest mniejszy niż zadana liczba).
+    - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer).
     """
     for index, block in enumerate(chain.blocks[1:]):
         if block.prev_block_hash != chain.blocks[index].hash:
             return False
 
-        if int.from_bytes(block.hash, 'big') > DIFFICULTY:
+        if int.from_bytes(block.hash, 'big') > MAX_256_INT >> DIFFICULTY:
             return False
 
     return True
