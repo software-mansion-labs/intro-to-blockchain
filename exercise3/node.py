@@ -18,6 +18,7 @@ class Node:
     - blockchain,
     - klucz publiczny właściciela, wykorzystywany do przypisywania nowych coin'ów do konta.
     """
+
     blockchain: Blockchain
     owner: PublicKey
 
@@ -28,7 +29,9 @@ class Node:
 
         """
         self.owner = owner_public_key
-        self.blockchain = Blockchain([Block(b'\x00', int(time()), 0, [initial_transaction])])
+        self.blockchain = Blockchain(
+            [Block(b"\x00", int(time()), 0, [initial_transaction])]
+        )
 
     def add_transaction(self, transaction: Transaction):
         """
@@ -42,12 +45,14 @@ class Node:
         if not self.validate_transaction(transaction):
             raise Exception("Transaction can't be added. Verification failed.")
 
-        new_coin_transaction = Transaction(recipient=self.owner, previous_tx_hash=b'\x00')
+        new_coin_transaction = Transaction(
+            recipient=self.owner, previous_tx_hash=b"\x00"
+        )
         new_block = Block(
             prev_block_hash=self.blockchain.get_latest_block().hash,
             timestamp=int(time()),
             nonce=0,
-            transactions=[transaction, new_coin_transaction]
+            transactions=[transaction, new_coin_transaction],
         )
 
         new_block = self.find_nonce(new_block)
@@ -57,7 +62,7 @@ class Node:
         """
         TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
         """
-        while int.from_bytes(block.hash, 'big') > MAX_256_INT >> DIFFICULTY:
+        while int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
             block.nonce += 1
         return block
 
@@ -75,13 +80,16 @@ class Node:
         if prev_transaction is None:
             return False
 
-        if self.blockchain.get_transaction_by_previous_tx_hash(prev_transaction.tx_hash) is not None:
+        if (
+            self.blockchain.get_transaction_by_previous_tx_hash(
+                prev_transaction.tx_hash
+            )
+            is not None
+        ):
             return False
 
         return verify_signature(
-            prev_transaction.recipient,
-            transaction.signature,
-            transaction.tx_hash
+            prev_transaction.recipient, transaction.signature, transaction.tx_hash
         )
 
     def get_state(self) -> Blockchain:
@@ -102,7 +110,7 @@ def validate_chain(chain: Blockchain) -> bool:
         if block.prev_block_hash != chain.blocks[index].hash:
             return False
 
-        if int.from_bytes(block.hash, 'big') > MAX_256_INT >> DIFFICULTY:
+        if int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
             return False
 
     return True

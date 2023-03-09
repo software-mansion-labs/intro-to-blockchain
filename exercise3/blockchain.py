@@ -12,6 +12,7 @@ class Blockchain:
     Powinna zawierać:
     - listę bloków.
     """
+
     blocks: List[Block]
 
     def get_latest_block(self) -> Block:
@@ -37,7 +38,9 @@ class Blockchain:
 
         return None
 
-    def get_transaction_by_previous_tx_hash(self, previous_tx_hash: bytes) -> Optional[Transaction]:
+    def get_transaction_by_previous_tx_hash(
+        self, previous_tx_hash: bytes
+    ) -> Optional[Transaction]:
         """
         TODO: Przy pomocy podanego `previous_tx_hash` wyszukaj transakcję.
         """
