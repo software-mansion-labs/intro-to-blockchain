@@ -6,8 +6,9 @@ from exercise3.block import Block
 from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature
 
-# Spróbuj zmodyfikować liczbę i zobacz, jak wpłynie to na czas wydobywania bloku!
-DIFFICULTY = 1e72
+# Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
+DIFFICULTY = 18  # Oznacza ilość zerowych bitów na początku hasha
+MAX_256_INT = 2**256
 
 
 class Node:
@@ -53,9 +54,9 @@ class Node:
 
     def find_nonce(self, block: Block) -> Optional[Block]:
         """
-        Znajdź nonce spełniające kryterium -> hash bloku powinien być mniejszy niż zadana liczba.
+        Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
         """
-        while int.from_bytes(block.hash, 'big') > DIFFICULTY:
+        while int.from_bytes(block.hash, 'big') > MAX_256_INT >> DIFFICULTY:
             block.nonce += 1
         return block
 

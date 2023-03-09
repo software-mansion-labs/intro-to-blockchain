@@ -3,7 +3,7 @@ import pytest
 from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
-from exercise3.node import Node, validate_chain, DIFFICULTY
+from exercise3.node import Node, validate_chain, DIFFICULTY, MAX_256_INT
 from simple_cryptography import generate_key_pair, sign
 
 (pub1, priv1) = generate_key_pair()
@@ -146,4 +146,4 @@ def test_find_nonce():
     block = Block(node.blockchain.get_latest_block().hash, 0, 0, [])
     block = node.find_nonce(block)
 
-    assert int.from_bytes(block.hash, 'big') < DIFFICULTY
+    assert int.from_bytes(block.hash, 'big') < MAX_256_INT >> DIFFICULTY
