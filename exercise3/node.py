@@ -6,7 +6,8 @@ from exercise3.block import Block
 from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature
 
-DIFFICULTY = 1e75
+# Spróbuj zmodyfikować liczbę i zobacz, jak wpłynie to na czas wydobywania bloku!
+DIFFICULTY = 1e72
 
 
 class Node:
@@ -58,7 +59,8 @@ class Node:
 
     def validate_transaction(self, transaction: Transaction) -> bool:
         """
-        Transakcja jest poprawna, jeśli ma podpis oraz gdy podpis jest poprawny.
+        Transakcja jest poprawna, jeśli ma podpis, podpis jest poprawny oraz coin,
+        którego chcemy wydać, istnieje.
         Skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
         """
         if transaction.signature is None:
