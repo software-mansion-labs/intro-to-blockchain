@@ -32,7 +32,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("command", choices=["transfer", "get_balance"])
 parser.add_argument("-r", "--recipient", help="Address of the recipient", type=str)
 
-wallet = Wallet("url") # TODO: Set url here
+wallet = Wallet("127.0.0.1:5009") # TODO: Set url here
 
 if __name__ == "__main__":
     args = parser.parse_args()

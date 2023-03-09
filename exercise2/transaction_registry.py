@@ -1,4 +1,5 @@
 from simple_cryptography import hash, PublicKey, verify_signature
+from typing import Optional
 
 class Transaction:
     recipient: PublicKey    
@@ -10,7 +11,7 @@ class Transaction:
         self.recipient = recipient
         self.previous_tx_hash = previous_tx_hash
         self.signature = signature
-        self.tx_hash = hash(recipient.public_bytes() + previous_tx_hash)
+        self.tx_hash = hash(recipient.to_bytes() + previous_tx_hash)
 
 class TransactionRegistry:
     transactions: list[Transaction]
@@ -18,7 +19,7 @@ class TransactionRegistry:
     def __init__(self, initial_transactions: list[Transaction]):
         self.transactions = initial_transactions
 
-    def get_transaction(self, tx_hash: bytes) -> Transaction:
+    def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:
         for tx in self.transactions:
             if tx.tx_hash == tx_hash:
                 return tx    
@@ -32,7 +33,6 @@ class TransactionRegistry:
 
         W przypadku gdy transakcja o hashu tx_hash nie istnieje, zwróć false.
         """
-
         for tx in self.transactions:
             if tx.previous_tx_hash == tx_hash:
                 return True
@@ -41,10 +41,14 @@ class TransactionRegistry:
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
-        TODO: Dla podanej transakcji zweryfikuj jej podpis, względem klucza publicznego poprzedniej transakcji.
+        TODO: Dla podanej transakcji zweryfikuj jej podpis. Tj. że została podpisana przez właściciela (klucz publiczny)
+        poprzedniej transakcji.
         Przypomnienie: podpisywany jest hash transakcji.
         """
         previous_transaction = self.get_transaction(transaction.previous_tx_hash)
+
+        if previous_transaction == None:
+            return False
 
         return verify_signature(previous_transaction.recipient, transaction.signature, transaction.tx_hash)
 
