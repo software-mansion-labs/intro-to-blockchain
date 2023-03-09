@@ -24,7 +24,7 @@ class PrivateKey:
 class PublicKey:
     value: rsa.RSAPublicKey
 
-    def public_bytes(self) -> bytes:
+    def to_bytes(self) -> bytes:
         return self.value.public_bytes(Encoding.OpenSSH, PublicFormat.OpenSSH)
 
 def generate_key_pair() -> Tuple[PublicKey, PrivateKey]:
