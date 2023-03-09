@@ -22,7 +22,7 @@ class Block:
     @property
     def hash(self):
         """
-        Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
+        TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
         Hash powinien zawierać wszystkie składowe bloku.
         """
         hashed_txs = b'\x00'

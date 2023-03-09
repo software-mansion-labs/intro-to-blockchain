@@ -16,19 +16,19 @@ class Blockchain:
 
     def get_latest_block(self) -> Block:
         """
-        Zwróć ostatni blok.
+        TODO: Zwróć ostatni blok.
         """
         return self.blocks[-1]
 
     def length(self) -> int:
         """
-        Zwróć długość łańcucha.
+        TODO: Zwróć długość łańcucha.
         """
         return len(self.blocks)
 
     def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:
         """
-        Przy pomocy podanego `tx_hash` wyszukaj transakcję.
+        TODO: Przy pomocy podanego `tx_hash` wyszukaj transakcję.
         """
         for block in self.blocks:
             for transaction in block.transactions:
@@ -39,7 +39,7 @@ class Blockchain:
 
     def get_transaction_by_previous_tx_hash(self, previous_tx_hash: bytes) -> Optional[Transaction]:
         """
-        Przy pomocy podanego `previous_tx_hash` wyszukaj transakcję.
+        TODO: Przy pomocy podanego `previous_tx_hash` wyszukaj transakcję.
         """
         for block in self.blocks:
             for transaction in block.transactions:
