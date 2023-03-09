@@ -77,6 +77,19 @@ def test_add_transaction_throws_on_wrong_transaction():
         node.add_transaction(new_tx)
 
 
+def test_add_transaction_throws_on_spending_spent_transaction():
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
+    node = Node(pub1, init_tx)
+
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx.signature = sign(priv1, new_tx.tx_hash)
+    node.add_transaction(new_tx)
+
+    with pytest.raises(Exception):
+        # Próba wydania wcześniej wydanego coin'a
+        node.add_transaction(new_tx)
+
+
 def test_validate_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
     node = Node(pub1, init_tx)
@@ -91,14 +104,22 @@ def test_validate_transaction_throws_on_wrong_tx():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b'\x00')
     node = Node(pub1, init_tx)
 
+    # Użytkownik, do którego nie należy coin, próbuje go wydać
     wrong_user = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
     wrong_user.signature = sign(priv2, wrong_user.tx_hash)
 
-    coin_does_not_exist = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    coin_does_not_exist.signature = sign(priv2, coin_does_not_exist.tx_hash)
+    # Coin, który próbujemy wydać nie istnieje
+    coin_does_not_exist = Transaction(recipient=pub2, previous_tx_hash=b'\x03')
+    coin_does_not_exist.signature = sign(priv1, coin_does_not_exist.tx_hash)
+
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx.signature = sign(priv1, new_tx.tx_hash)
+    node.add_transaction(new_tx)
 
     assert not node.validate_transaction(wrong_user)
     assert not node.validate_transaction(coin_does_not_exist)
+    # Próba wydania wcześniej wydanego coin'a
+    assert not node.validate_transaction(new_tx)
 
 
 def test_validate_chain():

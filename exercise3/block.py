@@ -10,7 +10,7 @@ class Block:
     """
     Blok powinien zawierać:
     - hash poprzedniego bloku,
-    - moment, w którym został stworzony,
+    - moment w czasie, w którym został stworzony,
     - listę transakcji
     - nonce.
     """
@@ -22,7 +22,8 @@ class Block:
     @property
     def hash(self):
         """
-        Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography
+        Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
+        Hash powinien zawierać wszystkie składowe bloku.
         """
         hashed_txs = b'\x00'
         for transaction in self.transactions:

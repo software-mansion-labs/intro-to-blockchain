@@ -36,3 +36,14 @@ class Blockchain:
                     return transaction
 
         return None
+
+    def get_transaction_by_previous_tx_hash(self, previous_tx_hash: bytes) -> Optional[Transaction]:
+        """
+        Przy pomocy podanego `previous_tx_hash` wyszukaj transakcję.
+        """
+        for block in self.blocks:
+            for transaction in block.transactions:
+                if transaction.previous_tx_hash == previous_tx_hash:
+                    return transaction
+
+        return None
