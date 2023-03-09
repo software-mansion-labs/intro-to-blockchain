@@ -10,18 +10,29 @@ DIFFICULTY = 1e75
 
 
 class Node:
+    """
+    Klasa reprezentująca węzeł sieci. Odpowiada za dodawanie transakcji i tworzenie bloków.
+    Powinna zawierać:
+    - łańcuch bloków,
+    - klucz publiczny właściciela, wykorzystywany do przypisywania nowych coin'ów do konta.
+    """
     blockchain: Blockchain
     owner: PublicKey
 
     def __init__(self, owner_public_key: PublicKey, initial_transaction: Transaction):
+        """
+        Przypisz wartości polom owner oraz blockchain przy pomocy podanych argumentów.
+        """
         self.owner = owner_public_key
         self.blockchain = Blockchain([Block(b'\x00', 0, 0, [initial_transaction])])
 
     def add_transaction(self, transaction: Transaction):
         """
-        Tutaj przychodzi transakcja od użytkownika.
-        Tworzona jest transakcja z nowym coinem i z obu powstaje blok.
-        Następuje proces kopania i po wykopaniu blok dodawany jest do łańcucha.
+        Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`).
+        Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a.
+        Stwórz nowy blok zawierający obie transakcje.
+        Znajdź nonce, który spełni kryteria sieci (użyj metody `find_nonce`).
+        Dodaj blok na koniec łańcucha.
         """
         if not self.validate_transaction(transaction):
             raise Exception("Transaction can't be added. Verification failed.")
@@ -38,11 +49,18 @@ class Node:
         self.blockchain.blocks.append(new_block)
 
     def find_nonce(self, block: Block) -> Optional[Block]:
+        """
+        Znajdź nonce spełniające kryterium -> hash bloku powinien być mniejszy niż zadana liczba.
+        """
         while int.from_bytes(block.hash, 'big') > DIFFICULTY:
             block.nonce += 1
         return block
 
     def validate_transaction(self, transaction: Transaction) -> bool:
+        """
+        Transakcja jest poprawna, jeśli ma podpis oraz gdy podpis jest poprawny.
+        Skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
+        """
         if transaction.signature is None:
             return False
 
@@ -50,13 +68,25 @@ class Node:
         if prev_transaction is None:
             return False
 
-        return verify_signature(prev_transaction.recipient, transaction.signature, transaction.tx_hash)
+        return verify_signature(
+            prev_transaction.recipient,
+            transaction.signature,
+            transaction.tx_hash
+        )
 
     def get_state(self) -> Blockchain:
+        """
+        Zwróć blockchain.
+        """
         return self.blockchain
 
 
 def validate_chain(chain: Blockchain) -> bool:
+    """
+    Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
+    - hash poprzedniego bloku jest przypisany prawidłowo,
+    - wykonano proof of work (hash bloku spełnia kryterium).
+    """
     for index, block in enumerate(chain.blocks[1:]):
         if block.prev_block_hash != chain.blocks[index].hash:
             return False

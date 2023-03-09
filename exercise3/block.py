@@ -7,6 +7,13 @@ from simple_cryptography import hash
 
 @dataclass
 class Block:
+    """
+    Blok powinien zawierać:
+    - hash poprzedniego bloku,
+    - moment, w którym został stworzony,
+    - listę transakcji
+    - nonce.
+    """
     prev_block_hash: bytes
     timestamp: int
     nonce: int
@@ -14,9 +21,12 @@ class Block:
 
     @property
     def hash(self):
+        """
+        Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography
+        """
         hashed_txs = b'\x00'
-        for tx in self.transactions:
-            hashed_txs = hash(hashed_txs + tx.tx_hash)
+        for transaction in self.transactions:
+            hashed_txs = hash(hashed_txs + transaction.tx_hash)
 
         return hash(self.prev_block_hash +
                     self.timestamp.to_bytes(32, 'big') +
