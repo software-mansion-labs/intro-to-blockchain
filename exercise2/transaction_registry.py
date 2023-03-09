@@ -1,6 +1,6 @@
 from simple_cryptography import hash, PublicKey, verify_signature
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 import copy
 
 @dataclass
@@ -9,33 +9,45 @@ class Transaction:
     Transakcja zawiera:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
-    - podpis transakcji - opcjonalny, zakładamy mechanizm, w którym najpierw tworzymy transakcję bez podpisu
-      a następnie tworzymy podpis i go aktualizujemy.
     """
     recipient: PublicKey    
     previous_tx_hash: bytes
-    signature: Optional[bytes]
 
     @property
     def tx_hash(self):
         return hash(self.recipient.to_bytes() + self.previous_tx_hash)
 
-    def __init__(self, recipient: PublicKey, previous_tx_hash: bytes, signature: bytes = None):
+    def __init__(self, recipient: PublicKey, previous_tx_hash: bytes):
         self.recipient = recipient
         self.previous_tx_hash = previous_tx_hash
-        self.signature = signature
     
     def __repr__(self):
-        return f"Tx(recipient: {self.recipient.to_bytes()[8:16]}, prev_hash: {self.previous_tx_hash[:6]})"
+        return f"Tx(recipient: {self.recipient.to_bytes()[8:14]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
+
+@dataclass
+class SignedTransaction(Transaction):
+    """
+    Podpisana transakcja zawiera dodatkowo:
+    - Podpis transakcji, utworzony przy pomocy klucza prywatnego poprzedniego właściciela transakcji.
+    """
+    signature: bytes
+
+    def __init__(self, recipient: PublicKey, previous_tx_hash: bytes, signature: bytes):
+        super().__init__(recipient, previous_tx_hash)
+        self.signature = signature
+    
+    def __init__(self, transaction: Transaction, signature: bytes):
+        super().__init__(transaction.recipient, transaction.previous_tx_hash)
+        self.signature = signature
 
 class TransactionRegistry:
     """
     Klasa reprezentująca publiczny rejestr transakcji. Odpowiada za przyjmowanie nowych transakcji i ich
     przechowywanie.
     """
-    transactions: list[Transaction]
+    transactions: List[Transaction]
 
-    def __init__(self, initial_transactions: list[Transaction]):
+    def __init__(self, initial_transactions: List[Transaction]):
         self.transactions = copy.copy(initial_transactions)
 
     def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:

@@ -1,5 +1,5 @@
 from exercise2.wallet import Wallet
-from exercise2.transaction_registry import Transaction, TransactionRegistry
+from exercise2.transaction_registry import Transaction, SignedTransaction, TransactionRegistry
 from simple_cryptography import generate_key_pair
 
 alice = Wallet(generate_key_pair())

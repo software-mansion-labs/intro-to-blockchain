@@ -1,6 +1,6 @@
-from simple_cryptography import generate_key_pair, sign
+from simple_cryptography import generate_key_pair, sign, verify_signature
 
-from exercise2.transaction_registry import Transaction, TransactionRegistry
+from exercise2.transaction_registry import Transaction, SignedTransaction, TransactionRegistry
 from exercise2.wallet import Wallet
 
 (pub1, priv1) = generate_key_pair()
@@ -28,9 +28,11 @@ def test_get_transaction():
 
 def test_is_transaction_spent():
     print(len(initial_transactions))
-    new_transaction = Transaction(pub2, initial_transactions[0].tx_hash, None)
+    new_transaction = Transaction(pub2, initial_transactions[0].tx_hash)
     
-    new_transaction.signature = sign(priv1, new_transaction.tx_hash)
+    signature = sign(priv1, new_transaction.tx_hash)
+
+    new_transaction = SignedTransaction(new_transaction, signature)
 
     reg = TransactionRegistry(initial_transactions + [new_transaction])
 
@@ -44,11 +46,11 @@ def test_is_transaction_spent():
 def test_add_transaction():
     reg = TransactionRegistry(initial_transactions)
 
-    new_tx1 = Transaction(pub2, initial_transactions[0].tx_hash, None)
-    new_tx1.signature = sign(priv1, new_tx1.tx_hash)
+    new_tx1 = Transaction(pub2, initial_transactions[0].tx_hash)
+    new_tx1 = SignedTransaction(new_tx1, sign(priv1, new_tx1.tx_hash))
 
-    new_tx2 = Transaction(pub3, new_tx1.tx_hash, None)
-    new_tx2.signature = sign(priv2, new_tx2.tx_hash)
+    new_tx2 = Transaction(pub3, new_tx1.tx_hash)
+    new_tx2 = SignedTransaction(new_tx2, sign(priv2, new_tx2.tx_hash))
 
     assert reg.add_transaction(new_tx1)
     assert reg.add_transaction(new_tx2)
@@ -81,3 +83,14 @@ def test_transfer():
 
     assert wallet1.get_balance(reg) == 2
     assert wallet2.get_balance(reg) == 4
+
+def test_sign_transaction():
+    reg = TransactionRegistry(initial_transactions)
+
+    wallet1 = Wallet((pub1, priv1))
+    wallet2 = Wallet((pub2, priv2))
+
+    tx = Transaction(wallet2.public_key, initial_transactions[0].tx_hash)
+    signed_tx = wallet1.sign_transaction(tx)
+
+    assert verify_signature(wallet1.public_key, signed_tx.signature, signed_tx.tx_hash)
