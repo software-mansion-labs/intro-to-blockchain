@@ -1,3 +1,5 @@
+from time import time
+
 import pytest
 
 from exercise2.transaction_registry import Transaction
@@ -124,7 +126,7 @@ def test_validate_transaction_throws_on_wrong_tx():
     assert not node.validate_transaction(new_tx)
 
 
-def test_validate_chain():
+def test_validate_valid_chain():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
@@ -135,10 +137,50 @@ def test_validate_chain():
     assert validate_chain(node.blockchain)
 
 
-def test_validate_chain_throws_on_wrong_chain():
+def test_validate_chain_with_wrong_block():
     chain = Blockchain([Block(b"\x00", 0, 0, []), Block(b"\x00", 0, 0, [])])
 
     assert not validate_chain(chain)
+
+
+def test_validate_chain_with_wrong_transaction():
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
+    node = Node(pub1, init_tx)
+
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx.signature = sign(priv2, new_tx.tx_hash)
+
+    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
+    new_block = Block(
+        prev_block_hash=node.blockchain.get_latest_block().hash,
+        timestamp=int(time()),
+        nonce=0,
+        transactions=[new_tx, new_coin_transaction],
+    )
+
+    new_block = node.find_nonce(new_block)
+    node.blockchain.blocks.append(new_block)
+
+    assert not validate_chain(node.blockchain)
+
+
+def test_validate_chain_with_wrong_new_coin_transaction():
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
+    node = Node(pub1, init_tx)
+
+    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
+    new_coin_transaction2 = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
+    new_block = Block(
+        prev_block_hash=node.blockchain.get_latest_block().hash,
+        timestamp=int(time()),
+        nonce=0,
+        transactions=[new_coin_transaction, new_coin_transaction2],
+    )
+
+    new_block = node.find_nonce(new_block)
+    node.blockchain.blocks.append(new_block)
+
+    assert not validate_chain(node.blockchain)
 
 
 def test_find_nonce():
