@@ -4,7 +4,7 @@ from typing import Optional
 from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
-from simple_cryptography import PublicKey, verify_signature
+from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
 DIFFICULTY = 18  # Oznacza ilość zerowych bitów na początku hasha
@@ -67,6 +67,10 @@ def validate_chain(chain: Blockchain) -> bool:
     TODO: Zweryfikuj poprawność łańcucha.
     Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
     - hash poprzedniego bloku jest przypisany prawidłowo,
-    - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer).
+    _ timestamp rośnie razem z numerem bloku,
+    - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
+    - wszystkie transakcje w bloku są poprawne.
+
+    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny!
     """
     raise NotImplementedError()
