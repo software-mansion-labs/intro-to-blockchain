@@ -4,7 +4,7 @@ from typing import Optional
 from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
-from simple_cryptography import PublicKey, verify_signature
+from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
 DIFFICULTY = 18  # Oznacza ilość zerowych bitów na początku hasha
@@ -98,11 +98,33 @@ def validate_chain(chain: Blockchain) -> bool:
     - hash poprzedniego bloku jest przypisany prawidłowo,
     - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer).
     """
+    if len(chain.blocks[0].transactions) != 1:
+        return False
+
+    honest_node = Node(generate_key_pair()[0], chain.blocks[0].transactions[0])
+
     for index, block in enumerate(chain.blocks[1:]):
         if block.prev_block_hash != chain.blocks[index].hash:
             return False
 
-        if int.from_bytes(block.hash, 'big') > MAX_256_INT >> DIFFICULTY:
+        if block.timestamp < chain.blocks[index].timestamp:
             return False
 
+        if int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
+            return False
+
+        new_coin_transaction_used = False
+        for transaction in block.transactions:
+            if transaction.previous_tx_hash == b"\00":
+                if new_coin_transaction_used:
+                    return False
+                new_coin_transaction_used = True
+                continue
+
+            if not honest_node.validate_transaction(transaction):
+                return False
+
+        honest_node.blockchain.blocks.append(block)
+
     return True
+
