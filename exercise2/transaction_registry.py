@@ -1,25 +1,48 @@
 from simple_cryptography import hash, PublicKey, verify_signature
+from dataclasses import dataclass
 from typing import Optional
+import copy
 
+@dataclass
 class Transaction:
+    """
+    Transakcja zawiera:
+    - odbiorcę transakcji (klucz publiczny)
+    - hash poprzedniej transakcji
+    - podpis transakcji - opcjonalny, zakładamy mechanizm, w którym najpierw tworzymy transakcję bez podpisu
+      a następnie tworzymy podpis i go aktualizujemy.
+    """
     recipient: PublicKey    
     previous_tx_hash: bytes
-    tx_hash: bytes
-    signature: bytes
+    signature: Optional[bytes]
+
+    @property
+    def tx_hash(self):
+        return hash(self.recipient.to_bytes() + self.previous_tx_hash)
 
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes, signature: bytes = None):
         self.recipient = recipient
         self.previous_tx_hash = previous_tx_hash
         self.signature = signature
-        self.tx_hash = hash(recipient.to_bytes() + previous_tx_hash)
+    
+    def __repr__(self):
+        return f"Tx(recipient: {self.recipient.to_bytes()[8:16]}, prev_hash: {self.previous_tx_hash[:6]})"
 
 class TransactionRegistry:
+    """
+    Klasa reprezentująca publiczny rejestr transakcji. Odpowiada za przyjmowanie nowych transakcji i ich
+    przechowywanie.
+    """
     transactions: list[Transaction]
 
     def __init__(self, initial_transactions: list[Transaction]):
-        self.transactions = initial_transactions
+        self.transactions = copy.copy(initial_transactions)
 
     def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:
+        """
+        TODO: Znajdź transakcję z podanym tx_hash.
+        Jeśli istnieje transakcja z podanym tx_hash, zwróć ją, w przeciwnym przypadku zwróć None.
+        """
         for tx in self.transactions:
             if tx.tx_hash == tx_hash:
                 return tx    
@@ -28,10 +51,9 @@ class TransactionRegistry:
 
     def is_transaction_spent(self, tx_hash: bytes) -> bool:
         """
-        TODO: Sprawdź czy transakcja o podanym hashu została wykorzystana - tj. czy istnieje inna transakcja
-        dla której ta transakcja jest wcześniejszą transakcją. (pole previous_tx_hash).
-
-        W przypadku gdy transakcja o hashu tx_hash nie istnieje, zwróć false.
+        TODO: Sprawdź czy transakcja o podanym hashu została wykorzystana.
+        Tj. sprawdź czy istnieje inna transakcja dla której ta transakcja jest
+        wcześniejszą transakcją. (pole previous_tx_hash).
         """
         for tx in self.transactions:
             if tx.previous_tx_hash == tx_hash:
@@ -41,8 +63,9 @@ class TransactionRegistry:
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
-        TODO: Dla podanej transakcji zweryfikuj jej podpis. Tj. że została podpisana przez właściciela (klucz publiczny)
-        poprzedniej transakcji.
+        TODO: Zweryfikuj podpis transakcji. 
+        Sprawdź czy dana transakcja została podpisana przez właściciela (klucz publiczny) poprzedniej transakcji.
+        Do weryfikacji podpisu wykorzystaj funkcję verify_signature z simple_cryptography.
         Przypomnienie: podpisywany jest hash transakcji.
         """
         previous_transaction = self.get_transaction(transaction.previous_tx_hash)
@@ -60,6 +83,7 @@ class TransactionRegistry:
         - poprzednia transakcja nie została wykorzystana
         - podpis transakcji się zgadza
         wykorzystaj do tego dwie metody powyżej.
+        Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
         """
         if not self.verify_transaction_signature(transaction):
             return False
