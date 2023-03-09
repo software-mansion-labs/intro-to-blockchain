@@ -1,49 +1,51 @@
 import argparse
 import requests
-from simple_cryptography import PrivateKey, PublicKey
+from simple_cryptography import PrivateKey, PublicKey, sign, generate_key_pair
+from exercise2.transaction_registry import TransactionRegistry, Transaction
+from typing import Optional, Tuple
 
 class Wallet:
-    node_url: str
-    private_key: PrivateKey
     public_key: PublicKey
+    _private_key: PrivateKey
 
-    def __init__(self, node_url: str):
-        self.node_url = node_url
+    def __init__(self, key_pair: Tuple[PublicKey, PrivateKey]):
+        self.public_key = key_pair[0]
+        self._private_key = key_pair[1]
 
-        # TODO: Akceptować private key jako argument albo wczytywać z pliku
-
-    def get_unspent_transactions(self):
+    def get_unspent_transactions(self, registry: TransactionRegistry) -> list[Transaction]:
         """
         TODO: Znajdź wszystkie niewykorzystane transakcje powiązane z tym portfelem.
+        Spośród wszystkich transakcji w rejestrze (registry.transactions), zwróć te z których
+        każda spełnia oba warunki:
+        - odbiorcą transakcji jest klucz publiczny portfela
+        - transakcja nie została wykorzystana (metoda is_transaction_spent w TransactionRegistry)
         """
+        wallet_transactions = filter(lambda tx: tx.recipient == self.public_key, registry.transactions)
+        unspent_transactions = filter(lambda tx: not registry.is_transaction_spent(tx.tx_hash), wallet_transactions)
     
-    def get_balance(self):
-        """
-        TODO: Zwróć liczbę niewykorzystanych transakcji
-        """
-
-    def transfer(self, recipient):
-        """
-        TODO: Jeśli istnieje jakakolwiek niewykorzystana transakcja, przekaż ją do nowego właściciela.
-        """
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("command", choices=["transfer", "get_balance"])
-parser.add_argument("-r", "--recipient", help="Address of the recipient", type=str)
-
-wallet = Wallet("127.0.0.1:5009") # TODO: Set url here
-
-if __name__ == "__main__":
-    args = parser.parse_args()
-
-    if args.command == "transfer":
-        if args.recipient == None:
-            raise Exception("Missing one or more required arguments (-r/--recipient)")
-        
-        wallet.transfer(args.recipient, args.amount)
+        return list(unspent_transactions)
     
-    if args.command == "get_balance":
-        wallet.get_balance()
+    def get_balance(self, registry: TransactionRegistry) -> int:
+        """
+        TODO: Zwróć liczbę transakcji z wywołania get_unspent_transactions.
+        """
+        return len(self.get_unspent_transactions(registry))
 
+    def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
+        """
+        TODO: Przekaż coina do nowego właściciela.
+        - Znajdź dowolną niewykorzystaną transakcję, jeśli takiej nie ma, zwróć False.
+        - Stwórz nową transakcję, z podanym odbiorcą (recipient) oraz poprzednim hashem znalezionej transakcji.
+        - Podpisz nową transakcję kluczem prywatnym portfela.
+        - Dodaj transakcję do rejestru.
+        - Zwróć True jeśli wszystko się udało, False w przeciwnym wypadku.
+        """
+        unspent_transactions = self.get_unspent_transactions(registry)
 
+        if len(unspent_transactions) == 0:
+            return False
+
+        new_transaction = Transaction(recipient, unspent_transactions[0].tx_hash)
+        new_transaction.signature = sign(self._private_key, new_transaction.tx_hash)
+
+        return registry.add_transaction(new_transaction)

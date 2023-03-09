@@ -1,21 +1,22 @@
 from simple_cryptography import generate_key_pair, sign
 
 from exercise2.transaction_registry import Transaction, TransactionRegistry
+from exercise2.wallet import Wallet
 
 (pub1, priv1) = generate_key_pair()
 (pub2, priv2) = generate_key_pair()
 (pub3, priv3) = generate_key_pair()
 
 initial_transactions = [
-  Transaction(pub1, b'0', b''),
-  Transaction(pub1, b'1', b''),
-  Transaction(pub1, b'2', b''),
-  Transaction(pub2, b'0', b''),
-  Transaction(pub2, b'1', b''),
-  Transaction(pub2, b'2', b''),
-  Transaction(pub3, b'0', b''),
-  Transaction(pub3, b'1', b''),
-  Transaction(pub3, b'2', b''),
+  Transaction(pub1, b'0x00'),
+  Transaction(pub1, b'0x01'),
+  Transaction(pub1, b'0x02'),
+  Transaction(pub2, b'0x00'),
+  Transaction(pub2, b'0x01'),
+  Transaction(pub2, b'0x02'),
+  Transaction(pub3, b'0x00'),
+  Transaction(pub3, b'0x01'),
+  Transaction(pub3, b'0x02'),
 ]
 
 def test_get_transaction():
@@ -26,6 +27,7 @@ def test_get_transaction():
     assert reg.get_transaction(b'12345') == None
 
 def test_is_transaction_spent():
+    print(len(initial_transactions))
     new_transaction = Transaction(pub2, initial_transactions[0].tx_hash, None)
     
     new_transaction.signature = sign(priv1, new_transaction.tx_hash)
@@ -50,3 +52,32 @@ def test_add_transaction():
 
     assert reg.add_transaction(new_tx1)
     assert reg.add_transaction(new_tx2)
+
+def test_get_unspent_transactions():
+    reg = TransactionRegistry(initial_transactions)
+
+    wallet = Wallet((pub1, priv1))
+
+    txs = wallet.get_unspent_transactions(reg)
+
+    assert initial_transactions[0] in txs
+    assert initial_transactions[1] in txs
+    assert initial_transactions[2] in txs
+
+def test_get_balance():
+    reg = TransactionRegistry(initial_transactions)
+
+    wallet = Wallet((pub1, priv1))
+
+    assert wallet.get_balance(reg) == 3
+
+def test_transfer():
+    reg = TransactionRegistry(initial_transactions)
+
+    wallet1 = Wallet((pub1, priv1))
+    wallet2 = Wallet((pub2, priv2))
+
+    assert wallet1.transfer(reg, wallet2.public_key)
+
+    assert wallet1.get_balance(reg) == 2
+    assert wallet2.get_balance(reg) == 4
