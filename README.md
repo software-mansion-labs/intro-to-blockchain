@@ -37,13 +37,11 @@ Wywołaj `pytest` wewnątrz folderu danego zadania aby je przetestować.
 
 ### Masz problem z zadaniem?
 W branchach `solution2` i `solution-3` znajdują się rozwiązania odpowiednio drugiego i trzeciego zadania. Możesz je podejrzeć
-lub lokalnie zmergować je do mastera. W przypadku drugiej opcji najlepiej najpierw przywrócić stan folderu z ćwiczeniem do pierwotnego stanu aby uniknąć konfliktów. Możesz to zrobić dwoma komendami:
+lub lokalnie zmergować je do mastera. W przypadku drugiej opcji najlepiej najpierw przywrócić stan folderu z ćwiczeniem do pierwotnego stanu aby uniknąć konfliktów, a następnie zmergować dany branch. Możesz to zrobić dwoma komendami:
 
 ```
 git checkout -- exerciseX
 git merge solutionX
 ```
 
-
-
-zajrzeć, albo 
+podstawiając pod X numer zadania.
