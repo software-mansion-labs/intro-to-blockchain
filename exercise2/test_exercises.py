@@ -32,7 +32,7 @@ def test_is_transaction_spent():
     
     signature = sign(priv1, new_transaction.tx_hash)
 
-    new_transaction = SignedTransaction(new_transaction, signature)
+    new_transaction = SignedTransaction.from_transaction(new_transaction, signature)
 
     reg = TransactionRegistry(initial_transactions + [new_transaction])
 
@@ -47,10 +47,10 @@ def test_add_transaction():
     reg = TransactionRegistry(initial_transactions)
 
     new_tx1 = Transaction(pub2, initial_transactions[0].tx_hash)
-    new_tx1 = SignedTransaction(new_tx1, sign(priv1, new_tx1.tx_hash))
+    new_tx1 = SignedTransaction.from_transaction(new_tx1, sign(priv1, new_tx1.tx_hash))
 
     new_tx2 = Transaction(pub3, new_tx1.tx_hash)
-    new_tx2 = SignedTransaction(new_tx2, sign(priv2, new_tx2.tx_hash))
+    new_tx2 = SignedTransaction.from_transaction(new_tx2, sign(priv2, new_tx2.tx_hash))
 
     assert reg.add_transaction(new_tx1)
     assert reg.add_transaction(new_tx2)

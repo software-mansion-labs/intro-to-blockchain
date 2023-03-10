@@ -38,7 +38,7 @@ class Wallet:
         Następnie zwróc podpisaną transakcję jako obiekt klasy SignedTransaction.
         """
         signature = sign(self._private_key, transaction.tx_hash)
-        return SignedTransaction(transaction, signature)
+        return SignedTransaction.from_transaction(transaction, signature)
 
     def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
         """

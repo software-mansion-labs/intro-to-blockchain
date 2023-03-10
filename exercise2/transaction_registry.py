@@ -22,7 +22,7 @@ class Transaction:
         self.previous_tx_hash = previous_tx_hash
     
     def __repr__(self):
-        return f"Tx(recipient: {self.recipient.to_bytes()[8:14]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
+        return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
 
 @dataclass
 class SignedTransaction(Transaction):
@@ -35,10 +35,12 @@ class SignedTransaction(Transaction):
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes, signature: bytes):
         super().__init__(recipient, previous_tx_hash)
         self.signature = signature
+
+    def from_transaction(transaction: Transaction, signature: bytes):    
+        return SignedTransaction(transaction.recipient, transaction.previous_tx_hash, signature)
     
-    def __init__(self, transaction: Transaction, signature: bytes):
-        super().__init__(transaction.recipient, transaction.previous_tx_hash)
-        self.signature = signature
+    def __repr__(self):
+        return f"SignedTx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}.., signature: {self.signature[:6]})"
 
 class TransactionRegistry:
     """
