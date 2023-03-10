@@ -26,24 +26,14 @@ class Blockchain:
         """
         return len(self.blocks)
 
-    def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:
+    def get_transaction_by(
+        self,
+        tx_hash: Optional[bytes] = None,
+        previous_tx_hash: Optional[bytes] = None
+    ) -> Optional[Transaction]:
         """
-        TODO: Przy pomocy podanego `tx_hash` wyszukaj transakcję.
+        TODO: Przy pomocy podanego argumentu wyszukaj transakcję.
+        Można podać tylko jeden z dwóch argumentów. W zależności od tego, który został podany,
+        użyj go do znalezienia transakcji.
         """
-        for block in self.blocks:
-            for transaction in block.transactions:
-                if transaction.tx_hash == tx_hash:
-                    return transaction
-
-        return None
-
-    def get_transaction_by_previous_tx_hash(self, previous_tx_hash: bytes) -> Optional[Transaction]:
-        """
-        TODO: Przy pomocy podanego `previous_tx_hash` wyszukaj transakcję.
-        """
-        for block in self.blocks:
-            for transaction in block.transactions:
-                if transaction.previous_tx_hash == previous_tx_hash:
-                    return transaction
-
-        return None
+        raise NotImplementedError()
