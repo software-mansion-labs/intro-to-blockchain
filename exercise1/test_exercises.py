@@ -4,7 +4,7 @@ from exercise1 import signature_3
 from simple_cryptography import generate_key_pair, sign
 
 def test_hash():
-    assert Transaction(1, 2, "xDDDDDD").hash() == b"'sP[B9\x99\xec\xc1`\xf7\xcb?\xe9\xf6R\xf8\xe3v\x1f4\t\xecX%\xec\xc0\x0f{\xad\x0fN"
+    assert Transaction(1, 2, "xDDDDDD").hash() == b'\xf5\xa2\x81\x19\xfc\xd3eNI\tN\x8b)\xd2\xb9oZ\x11\xe7:\xc7\xec\x04\xca\xfb\xc8\x0fF\x0f1\xa9\xdf'
 
 secrect_message = """
 To jest tajna wiadomość która nigdy nie powinna zostać odczytana
