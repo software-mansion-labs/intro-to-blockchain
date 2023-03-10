@@ -17,4 +17,4 @@ class Transaction:
         wykorzystaj metodę int.to_bytes(2, 'big') oraz bytes(string, 'utf-8') do konwersji int to bytes
         bytes mozna konkatenować
         """
-        raise NotImplementedError()
+        hash(int.to_bytes(self.id, 2, 'big') + int.to_bytes(self.id, 2, 'big') + bytes(self.metadata, 'utf-8'))
