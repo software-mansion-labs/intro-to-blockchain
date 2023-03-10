@@ -12,6 +12,8 @@ class Transaction:
     """
     recipient: PublicKey
     previous_tx_hash: bytes
+    tx_hash: bytes
+    signature: bytes
 
     @property
     def tx_hash(self):
