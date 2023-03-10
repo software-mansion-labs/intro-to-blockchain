@@ -10,7 +10,7 @@ class Transaction:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
     """
-    recipient: PublicKey    
+    recipient: PublicKey
     previous_tx_hash: bytes
 
     @property
@@ -20,7 +20,7 @@ class Transaction:
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes):
         self.recipient = recipient
         self.previous_tx_hash = previous_tx_hash
-    
+
     def __repr__(self):
         return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
 
@@ -36,9 +36,10 @@ class SignedTransaction(Transaction):
         super().__init__(recipient, previous_tx_hash)
         self.signature = signature
 
-    def from_transaction(transaction: Transaction, signature: bytes):    
+    @staticmethod
+    def from_transaction(transaction: Transaction, signature: bytes):
         return SignedTransaction(transaction.recipient, transaction.previous_tx_hash, signature)
-    
+
     def __repr__(self):
         return f"SignedTx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}.., signature: {self.signature[:6]})"
 
@@ -75,9 +76,9 @@ class TransactionRegistry:
         
         return False
 
-    def verify_transaction_signature(self, transaction: Transaction) -> bool:
+    def verify_transaction_signature(self, transaction: SignedTransaction) -> bool:
         """
-        TODO: Zweryfikuj podpis transakcji. 
+        TODO: Zweryfikuj podpis transakcji.
         Sprawdź czy dana transakcja została podpisana przez właściciela (klucz publiczny) poprzedniej transakcji.
         Do weryfikacji podpisu wykorzystaj funkcję verify_signature z simple_cryptography.
         Przypomnienie: podpisywany jest hash transakcji.
@@ -90,7 +91,7 @@ class TransactionRegistry:
         return verify_signature(previous_transaction.recipient, transaction.signature, transaction.tx_hash)
 
 
-    def add_transaction(self, transaction: Transaction) -> bool:
+    def add_transaction(self, transaction: SignedTransaction) -> bool:
         """
         TODO: Dodaj nową transakcję do listy transakcji.
         Przed dodaniem upewnij się, że:

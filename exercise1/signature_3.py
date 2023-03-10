@@ -1,5 +1,5 @@
 
-from simple_cryptography import PublicKey, sign, verify_signature, generate_key_pair
+from simple_cryptography import PublicKey, sign, verify_signature, generate_key_pair, hash
 
 
 UMOWA = """
