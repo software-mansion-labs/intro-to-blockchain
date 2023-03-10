@@ -1,7 +1,7 @@
 from time import time
 from typing import Optional
 
-from exercise2.transaction_registry import Transaction
+from exercise2.transaction_registry import Transaction, SignedTransaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature, generate_key_pair
@@ -30,7 +30,7 @@ class Node:
         self.owner = owner_public_key
         self.blockchain = Blockchain([Block(b'\x00', int(time()), 0, [initial_transaction])])
 
-    def add_transaction(self, transaction: Transaction):
+    def add_transaction(self, transaction: SignedTransaction):
         """
         TODO: Dodaj podaną transakcję do bloku.
         Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.
@@ -61,7 +61,7 @@ class Node:
             block.nonce += 1
         return block
 
-    def validate_transaction(self, transaction: Transaction) -> bool:
+    def validate_transaction(self, transaction: SignedTransaction) -> bool:
         """
         TODO: Sprawdź poprawność transakcji.
         Transakcja jest poprawna, jeśli ma podpis, podpis jest poprawny oraz coin,
@@ -131,4 +131,3 @@ def validate_chain(chain: Blockchain) -> bool:
         honest_node.blockchain.blocks.append(block)
 
     return True
-
