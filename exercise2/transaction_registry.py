@@ -57,11 +57,7 @@ class TransactionRegistry:
         TODO: Znajdź transakcję z podanym tx_hash.
         Jeśli istnieje transakcja z podanym tx_hash, zwróć ją, w przeciwnym przypadku zwróć None.
         """
-        for tx in self.transactions:
-            if tx.tx_hash == tx_hash:
-                return tx    
-        
-        return None
+        raise NotImplementedError()
 
     def is_transaction_spent(self, tx_hash: bytes) -> bool:
         """
@@ -69,11 +65,7 @@ class TransactionRegistry:
         Tj. sprawdź czy istnieje inna transakcja dla której ta transakcja jest
         wcześniejszą transakcją. (pole previous_tx_hash).
         """
-        for tx in self.transactions:
-            if tx.previous_tx_hash == tx_hash:
-                return True
-        
-        return False
+        raise NotImplementedError()
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
@@ -82,13 +74,7 @@ class TransactionRegistry:
         Do weryfikacji podpisu wykorzystaj funkcję verify_signature z simple_cryptography.
         Przypomnienie: podpisywany jest hash transakcji.
         """
-        previous_transaction = self.get_transaction(transaction.previous_tx_hash)
-
-        if previous_transaction == None:
-            return False
-
-        return verify_signature(previous_transaction.recipient, transaction.signature, transaction.tx_hash)
-
+        raise NotImplementedError()
 
     def add_transaction(self, transaction: Transaction) -> bool:
         """
@@ -99,11 +85,4 @@ class TransactionRegistry:
         wykorzystaj do tego dwie metody powyżej.
         Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
         """
-        if not self.verify_transaction_signature(transaction):
-            return False
-        
-        if self.is_transaction_spent(transaction.previous_tx_hash):
-            return False
-        
-        self.transactions.append(transaction)
-        return True
+        raise NotImplementedError()
