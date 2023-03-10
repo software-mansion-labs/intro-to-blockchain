@@ -5,6 +5,10 @@ from simple_cryptography import generate_key_pair
 alice = Wallet(generate_key_pair())
 bob = Wallet(generate_key_pair())
 
+# Początkowe transakcje, bez podpisów.
+# Jest to nasz sposób na wprowadzenie nowych coinów do rejestru.
+# Podajemy różne wartości dla previous_tx_hash, żeby hashe transakcji nie były takie same.
+# Bitcoin rozwiązuje to inaczej, ale o tym później...
 initial_transactions = [
     Transaction(alice.public_key, b'0x00'),
     Transaction(alice.public_key, b'0x01'),
