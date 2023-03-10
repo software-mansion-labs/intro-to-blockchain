@@ -10,7 +10,7 @@ class Transaction:
     target_id: int
     metadata: str
 
-    
+
     def hash(self) -> bytes:
         """
         TODO -- zaimplementuj funckję hashującą transakcje wykorzystując funkcję hash z simple_cryptography
@@ -18,4 +18,3 @@ class Transaction:
         bytes mozna konkatenować
         """
         raise NotImplementedError()
-
