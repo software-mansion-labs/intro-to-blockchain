@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from simple_cryptography import generate_key_pair, asymmetric_decrypt, asymmetric_encrypt
+from simple_cryptography import PrivateKey, PublicKey, generate_key_pair, asymmetric_decrypt, asymmetric_encrypt
 
 
 class Alice:
@@ -23,8 +23,8 @@ class Bob:
         """
         TODO - wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography
         """
-        self._private_key = "TODO"
-        self._public_key = "TODO"
+        self._private_key: PrivateKey = "TODO"
+        self._public_key: PublicKey = "TODO"
 
     def get_public_key(self):
         return self._public_key
