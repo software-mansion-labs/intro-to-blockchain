@@ -68,7 +68,7 @@ class TransactionRegistry:
         """
         raise NotImplementedError()
 
-    def verify_transaction_signature(self, transaction: Transaction) -> bool:
+    def verify_transaction_signature(self, transaction: SignedTransaction) -> bool:
         """
         TODO: Zweryfikuj podpis transakcji.
         Sprawdź czy dana transakcja została podpisana przez właściciela (klucz publiczny) poprzedniej transakcji.
@@ -77,7 +77,7 @@ class TransactionRegistry:
         """
         raise NotImplementedError()
 
-    def add_transaction(self, transaction: Transaction) -> bool:
+    def add_transaction(self, transaction: SignedTransaction) -> bool:
         """
         TODO: Dodaj nową transakcję do listy transakcji.
         Przed dodaniem upewnij się, że:
