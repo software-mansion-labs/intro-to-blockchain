@@ -36,8 +36,8 @@ Do zaimplementowania masz metody w plikach:
 Wywołaj `pytest` wewnątrz folderu danego zadania aby je przetestować.
 
 ### Masz problem z zadaniem?
-W branchach `solution2` i `solution-3` znajdują się rozwiązania odpowiednio drugiego i trzeciego zadania. Możesz je podejrzeć
-lub lokalnie zmergować je do mastera. W przypadku drugiej opcji najlepiej najpierw przywrócić stan folderu z ćwiczeniem do pierwotnego stanu aby uniknąć konfliktów, a następnie zmergować dany branch. Możesz to zrobić dwoma komendami:
+W branchach `solution1`, `solution2` i `solution3` znajdują się rozwiązania odpowiednio pierwszego, drugiego i trzeciego zadania. Możesz je podejrzeć
+lub lokalnie zmergować do mastera. W przypadku drugiej opcji najlepiej najpierw przywrócić stan folderu z ćwiczeniem do pierwotnego stanu aby uniknąć konfliktów, a następnie zmergować dany branch. Możesz to zrobić dwoma komendami:
 
 ```
 git checkout -- exerciseX
