@@ -8,6 +8,7 @@ Do uczestnictwa w warsztatach potrzebujesz pythona 3, oraz dwie biblioteki któr
 
 ```
 python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
