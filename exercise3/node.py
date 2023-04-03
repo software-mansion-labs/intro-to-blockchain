@@ -29,6 +29,40 @@ class Node:
         """
         raise NotImplementedError()
 
+    def validate_transaction(self, transaction: SignedTransaction) -> bool:
+        """
+        TODO: Sprawdź poprawność transakcji.
+        Transakcja jest poprawna, jeśli:
+        - ma podpis,
+        - podpis jest poprawny
+        - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
+
+        Do weryfikacji podpisu skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
+
+        Jak sprawdzić, czy coin istnieje?
+        Spróbuj znaleźć transakcję, o hashu takim samym jak hash transakcji, którą chcemy wydać.
+
+        Jak sprawdzić, czy coin nie został wcześniej wydany?
+        Spróbuj znaleźć transakcję, której previous_tx_hash jest taki sam, jak hash transakcji, którą chcemy wydać.
+
+        !! Ważne !!
+        Transakcja, którą chcemy wydać oznacza transakcję poprzednią do tej podanej w argumencie `transaction`.
+        """
+        raise NotImplementedError()
+
+    def find_nonce(self, block: Block) -> Optional[Block]:
+        """
+        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
+
+        Jak sprawdzić ilość zer na początku hasha?
+        Porównaj hash zrzutowany na int oraz maksymalną wartość inta 256 przesuniętą bitowo o DIFFICULTY.
+
+        Przydatne operacje:
+        - int.from_bytes(hash, "big")
+        - MAX_256_INT >> DIFFICULTY
+        """
+        raise NotImplementedError()
+
     def add_transaction(self, transaction: SignedTransaction):
         """
         TODO: Dodaj podaną transakcję do bloku.
@@ -37,21 +71,6 @@ class Node:
         Stwórz nowy blok zawierający obie transakcje.
         Znajdź nonce, który spełni kryteria sieci (użyj metody `find_nonce`).
         Dodaj blok na koniec łańcucha.
-        """
-        raise NotImplementedError()
-
-    def find_nonce(self, block: Block) -> Optional[Block]:
-        """
-        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
-        """
-        raise NotImplementedError()
-
-    def validate_transaction(self, transaction: SignedTransaction) -> bool:
-        """
-        TODO: Sprawdź poprawność transakcji.
-        Transakcja jest poprawna, jeśli ma podpis, podpis jest poprawny oraz coin,
-        którego chcemy wydać, istnieje i nie został wcześniej wydany.
-        Skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
         """
         raise NotImplementedError()
 
@@ -71,6 +90,6 @@ def validate_chain(chain: Blockchain) -> bool:
     - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
     - wszystkie transakcje w bloku są poprawne.
 
-    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny!
+    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
     """
     raise NotImplementedError()
