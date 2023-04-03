@@ -15,7 +15,7 @@ class Blockchain:
 
     def __init__(self, initial_transaction: Transaction):
         initial_block = Block(
-            prev_block_hash=b"0", transactions=[initial_transaction], nonce=0
+            prev_block_hash=b"\x00", transactions=[initial_transaction], nonce=0
         )
         self.blocks = [initial_block]
 

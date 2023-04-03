@@ -17,7 +17,7 @@ from simple_cryptography import generate_key_pair, sign
 
 @pytest.mark.parametrize(
     "prev_block_hash, transactions, nonce",
-    [(b"0", [], 0), (b"12", [Transaction(pub1, b"0")], 43)],
+    [(b"\x00", [], 0), (b"12", [Transaction(pub1, b"\x00")], 43)],
 )
 def test_block_init(prev_block_hash, transactions, nonce):
     block = Block(prev_block_hash, transactions, nonce)
@@ -29,7 +29,7 @@ def test_block_init(prev_block_hash, transactions, nonce):
 
 
 def test_block_hash():
-    block = Block(b"12", [Transaction(pub1, b"0")], 43)
+    block = Block(b"12", [Transaction(pub1, b"\x00")], 43)
 
     assert isinstance(block.hash(), bytes)
     assert block.hash() != b'0'
@@ -39,7 +39,7 @@ def test_block_hash():
 
 
 def test_get_latest_block():
-    init_tx = Transaction(pub1, b"0")
+    init_tx = Transaction(pub1, b"\x00")
     chain = Blockchain(init_tx)
 
     assert isinstance(chain.get_latest_block(), Block)
@@ -47,31 +47,31 @@ def test_get_latest_block():
 
 
 def test_length():
-    init_tx = Transaction(pub1, b"0")
+    init_tx = Transaction(pub1, b"\x00")
     chain = Blockchain(init_tx)
 
     assert chain.length() == 1
 
 
 def test_get_transaction():
-    transaction = Transaction(pub1, b"0")
+    transaction = Transaction(pub1, b"\x00")
     chain = Blockchain(transaction)
 
     assert chain.get_transaction_by(tx_hash=transaction.tx_hash) == transaction
 
 
 def test_get_nonexistent_transaction():
-    transaction = Transaction(pub1, b"0")
+    transaction = Transaction(pub1, b"\x00")
     chain = Blockchain(transaction)
 
-    assert chain.get_transaction_by(tx_hash=b"0") is None
+    assert chain.get_transaction_by(tx_hash=b"\x00") is None
 
 
 # Node
 
 
 def test_node_init():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     assert node.owner == pub1
@@ -80,7 +80,7 @@ def test_node_init():
 
 
 def test_validate_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -92,7 +92,7 @@ def test_validate_transaction():
 
 
 def test_validate_transaction_throws_on_wrong_tx():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     # Użytkownik, do którego nie należy coin, próbuje go wydać
@@ -120,7 +120,7 @@ def test_validate_transaction_throws_on_wrong_tx():
 
 
 def test_find_nonce():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     block = Block(node.blockchain.get_latest_block().hash(), [], 0)
@@ -130,7 +130,7 @@ def test_find_nonce():
 
 
 def test_add_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -144,7 +144,7 @@ def test_add_transaction():
 
 
 def test_add_transaction_throws_on_wrong_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     # Użytkownik z kluczem publicznym `pub2` próbuje przekazać sobie coin'a należącego do pub1
@@ -158,7 +158,7 @@ def test_add_transaction_throws_on_wrong_transaction():
 
 
 def test_add_transaction_throws_on_spending_spent_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -173,7 +173,7 @@ def test_add_transaction_throws_on_spending_spent_transaction():
 
 
 def test_node_owner_gets_coin():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -187,7 +187,7 @@ def test_node_owner_gets_coin():
 
 
 def test_validate_valid_chain():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -200,14 +200,14 @@ def test_validate_valid_chain():
 
 
 def test_validate_chain_with_wrong_block():
-    chain = Blockchain(Transaction(pub1, b"0"))
-    chain.blocks.append(Block(b"0", []))
+    chain = Blockchain(Transaction(pub1, b"\x00"))
+    chain.blocks.append(Block(b"\x00", []))
 
     assert not validate_chain(chain)
 
 
 def test_validate_chain_with_wrong_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
     new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
@@ -215,7 +215,7 @@ def test_validate_chain_with_wrong_transaction():
         new_tx, sign(priv2, new_tx.tx_hash)
     )
 
-    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"0")
+    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
     new_block = Block(
         prev_block_hash=node.blockchain.get_latest_block().hash(),
         nonce=0,
@@ -229,11 +229,11 @@ def test_validate_chain_with_wrong_transaction():
 
 
 def test_validate_chain_with_wrong_new_coin_transaction():
-    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"0")
+    init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"0")
-    new_coin_transaction2 = Transaction(recipient=node.owner, previous_tx_hash=b"0")
+    new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
+    new_coin_transaction2 = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
     new_block = Block(
         prev_block_hash=node.blockchain.get_latest_block().hash(),
         nonce=0,
