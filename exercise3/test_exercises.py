@@ -72,7 +72,7 @@ def test_get_transaction_by_raises_at_two_arguments():
     chain = Blockchain(transaction)
 
     with pytest.raises(Exception):
-        chain.get_transaction_by(b"0", b"0")
+        chain.get_transaction_by(b"\x00", b"\x00")
 
 
 # Node
