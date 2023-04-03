@@ -35,7 +35,7 @@ class Block:
         - timestamp
         - nonce
         - hasha wszystkich transakcji:
-            - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'0')
+            - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'\x00')
             - przechodząc po wszystkich transakcjach
             - zaktualizuj hash wszystkich transakcji, hashem aktualnej
              all_tx_hash = hash(all_tx_hash + current_tx_hash)
