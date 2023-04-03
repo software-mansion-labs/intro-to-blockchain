@@ -43,8 +43,6 @@ def test_get_nonexistent_transaction():
     chain = Blockchain([block])
 
     assert chain.get_transaction_by(tx_hash=b"\x00") is None
-<<<<<<< HEAD
-=======
 
 
 def test_get_transaction_by_raises_at_two_arguments():
@@ -54,7 +52,6 @@ def test_get_transaction_by_raises_at_two_arguments():
 
     with pytest.raises(Exception):
         chain.get_transaction_by(b"\x00", b"\x00")
->>>>>>> origin/solution3
 
 
 # Node
