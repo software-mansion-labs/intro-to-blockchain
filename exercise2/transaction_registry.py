@@ -1,9 +1,8 @@
 from simple_cryptography import hash, PublicKey, verify_signature
-from dataclasses import dataclass
 from typing import Optional, List
 import copy
 
-@dataclass
+
 class Transaction:
     """
     Transakcja zawiera:
@@ -12,19 +11,18 @@ class Transaction:
     """
     recipient: PublicKey
     previous_tx_hash: bytes
-
-    @property
-    def tx_hash(self):
-        return hash(self.recipient.to_bytes() + self.previous_tx_hash)
+    tx_hash: bytes
 
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes):
         self.recipient = recipient
         self.previous_tx_hash = previous_tx_hash
 
+        self.tx_hash = hash(self.recipient.to_bytes() + self.previous_tx_hash)
+
     def __repr__(self):
         return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
 
-@dataclass
+
 class SignedTransaction(Transaction):
     """
     Podpisana transakcja zawiera dodatkowo:
@@ -43,6 +41,7 @@ class SignedTransaction(Transaction):
     def __repr__(self):
         return f"SignedTx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}.., signature: {self.signature[:6]})"
 
+
 class TransactionRegistry:
     """
     Klasa reprezentująca publiczny rejestr transakcji. Odpowiada za przyjmowanie nowych transakcji i ich
@@ -60,7 +59,7 @@ class TransactionRegistry:
         """
         for tx in self.transactions:
             if tx.tx_hash == tx_hash:
-                return tx    
+                return tx
         
         return None
 
@@ -73,7 +72,6 @@ class TransactionRegistry:
         for tx in self.transactions:
             if tx.previous_tx_hash == tx_hash:
                 return True
-        
         return False
 
     def verify_transaction_signature(self, transaction: SignedTransaction) -> bool:
@@ -85,11 +83,10 @@ class TransactionRegistry:
         """
         previous_transaction = self.get_transaction(transaction.previous_tx_hash)
 
-        if previous_transaction == None:
+        if previous_transaction is None:
             return False
 
         return verify_signature(previous_transaction.recipient, transaction.signature, transaction.tx_hash)
-
 
     def add_transaction(self, transaction: SignedTransaction) -> bool:
         """
@@ -102,9 +99,9 @@ class TransactionRegistry:
         """
         if not self.verify_transaction_signature(transaction):
             return False
-        
+
         if self.is_transaction_spent(transaction.previous_tx_hash):
             return False
-        
+
         self.transactions.append(transaction)
         return True

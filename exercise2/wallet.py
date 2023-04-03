@@ -1,6 +1,7 @@
-from simple_cryptography import PrivateKey, PublicKey, sign, generate_key_pair
+from simple_cryptography import PrivateKey, PublicKey, sign
 from exercise2.transaction_registry import TransactionRegistry, Transaction, SignedTransaction
-from typing import Optional, Tuple, List
+from typing import Tuple, List
+
 
 class Wallet:
     public_key: PublicKey
@@ -22,9 +23,9 @@ class Wallet:
         """
         wallet_transactions = filter(lambda tx: tx.recipient == self.public_key, registry.transactions)
         unspent_transactions = filter(lambda tx: not registry.is_transaction_spent(tx.tx_hash), wallet_transactions)
-    
+
         return list(unspent_transactions)
-    
+
     def get_balance(self, registry: TransactionRegistry) -> int:
         """
         TODO: Zwróć liczbę transakcji z wywołania get_unspent_transactions.
