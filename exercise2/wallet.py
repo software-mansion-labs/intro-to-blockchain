@@ -20,13 +20,16 @@ class Wallet:
         - odbiorcą transakcji jest klucz publiczny portfela
         - transakcja nie została wykorzystana (metoda is_transaction_spent w TransactionRegistry)
         """
-        raise NotImplementedError()
+        wallet_transactions = filter(lambda tx: tx.recipient == self.public_key, registry.transactions)
+        unspent_transactions = filter(lambda tx: not registry.is_transaction_spent(tx.tx_hash), wallet_transactions)
+    
+        return list(unspent_transactions)
     
     def get_balance(self, registry: TransactionRegistry) -> int:
         """
         TODO: Zwróć liczbę transakcji z wywołania get_unspent_transactions.
         """
-        raise NotImplementedError()
+        return len(self.get_unspent_transactions(registry))
 
     def sign_transaction(self, transaction: Transaction) -> SignedTransaction:
         """
@@ -34,7 +37,8 @@ class Wallet:
         Korzystając z funkcji sign z simple_cryptography, stwórz podpis danej transakcji.
         Następnie zwróc podpisaną transakcję jako obiekt klasy SignedTransaction.
         """
-        raise NotImplementedError()
+        signature = sign(self._private_key, transaction.tx_hash)
+        return SignedTransaction.from_transaction(transaction, signature)
 
     def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
         """
@@ -45,4 +49,12 @@ class Wallet:
         - Dodaj transakcję do rejestru.
         - Zwróć True jeśli wszystko się udało, False w przeciwnym wypadku.
         """
-        raise NotImplementedError()
+        unspent_transactions = self.get_unspent_transactions(registry)
+
+        if len(unspent_transactions) == 0:
+            return False
+
+        new_transaction = Transaction(recipient, unspent_transactions[0].tx_hash)
+        signed_transaction = self.sign_transaction(new_transaction)
+
+        return registry.add_transaction(signed_transaction)
