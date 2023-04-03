@@ -5,7 +5,6 @@ from exercise2.transaction_registry import Transaction
 from simple_cryptography import hash
 
 
-@dataclass
 class Block:
     """
     Blok powinien zawierać:
@@ -14,15 +13,33 @@ class Block:
     - listę transakcji
     - nonce.
     """
+
     prev_block_hash: bytes
     timestamp: int
     nonce: int
     transactions: List[Transaction]
 
+    def __init__(
+        self, prev_block_hash: bytes, transactions: List[Transaction], nonce: int = 0
+    ):
+        """
+        TODO: Stwórz blok z podanych argumentów.
+        Aby pobrać aktualny czas użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
+        """
+        raise NotImplementedError()
+
     @property
     def hash(self):
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
-        Hash powinien zawierać wszystkie składowe bloku.
+        Hash powinien składać się z wszystkich składowych bloku:
+        - prev_block_hash
+        - timestamp
+        - nonce
+        - hasha wszystkich transakcji:
+            - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'0')
+            - przechodząc po wszystkich transakcjach
+            - zaktualizuj hash wszystkich transakcji, hashem aktualnej
+             all_tx_hash = hash(all_tx_hash + current_tx_hash)
         """
         raise NotImplementedError()
