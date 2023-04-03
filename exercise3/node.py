@@ -25,13 +25,65 @@ class Node:
     def __init__(self, owner_public_key: PublicKey, initial_transaction: Transaction):
         """
         TODO: Przypisz wartości polom owner oraz blockchain przy pomocy podanych argumentów.
-        Wykorzystaj `initial_transaction` do stworzenia blockchain (hash poprzedniego bloku i nonce powinny być zerem).
-
+        Wykorzystaj `initial_transaction` do stworzenia blockchain.
         """
         self.owner = owner_public_key
-        self.blockchain = Blockchain(
-            [Block(b"\x00", int(time()), 0, [initial_transaction])]
+        self.blockchain = Blockchain(initial_transaction)
+
+    def validate_transaction(self, transaction: SignedTransaction) -> bool:
+        """
+        TODO: Sprawdź poprawność transakcji.
+        Transakcja jest poprawna, jeśli:
+        - ma podpis,
+        - podpis jest poprawny
+        - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
+
+        Do weryfikacji podpisu skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
+
+        Jak sprawdzić, czy coin istnieje?
+        Spróbuj znaleźć transakcję, o hashu takim samym jak hash transakcji, którą chcemy wydać.
+
+        Jak sprawdzić, czy coin nie został wcześniej wydany?
+        Spróbuj znaleźć transakcję, której previous_tx_hash jest taki sam, jak hash transakcji, którą chcemy wydać.
+
+        !! Ważne !!
+        Transakcja, którą chcemy wydać oznacza transakcję poprzednią do tej podanej w argumencie `transaction`.
+        """
+        if transaction.signature is None:
+            return False
+
+        prev_transaction = self.blockchain.get_transaction_by(
+            tx_hash=transaction.previous_tx_hash
         )
+        if prev_transaction is None:
+            return False
+
+        if (
+                self.blockchain.get_transaction_by(
+                    previous_tx_hash=prev_transaction.tx_hash
+                )
+                is not None
+        ):
+            return False
+
+        return verify_signature(
+            prev_transaction.recipient, transaction.signature, transaction.tx_hash
+        )
+
+    def find_nonce(self, block: Block) -> Optional[Block]:
+        """
+        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
+
+        Jak sprawdzić ilość zer na początku hasha?
+        Porównaj hash zrzutowany na int oraz maksymalną wartość inta 256 przesuniętą bitowo o DIFFICULTY.
+
+        Przydatne operacje:
+        - int.from_bytes(hash, "big")
+        - MAX_256_INT >> DIFFICULTY
+        """
+        while int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
+            block.nonce += 1
+        return block
 
     def add_transaction(self, transaction: SignedTransaction):
         """
@@ -58,42 +110,6 @@ class Node:
         new_block = self.find_nonce(new_block)
         self.blockchain.blocks.append(new_block)
 
-    def find_nonce(self, block: Block) -> Optional[Block]:
-        """
-        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
-        """
-        while int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
-            block.nonce += 1
-        return block
-
-    def validate_transaction(self, transaction: SignedTransaction) -> bool:
-        """
-        TODO: Sprawdź poprawność transakcji.
-        Transakcja jest poprawna, jeśli ma podpis, podpis jest poprawny oraz coin,
-        którego chcemy wydać, istnieje i nie został wcześniej wydany.
-        Skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
-        """
-        if transaction.signature is None:
-            return False
-
-        prev_transaction = self.blockchain.get_transaction_by(
-            tx_hash=transaction.previous_tx_hash
-        )
-        if prev_transaction is None:
-            return False
-
-        if (
-            self.blockchain.get_transaction_by(
-                previous_tx_hash=prev_transaction.tx_hash
-            )
-            is not None
-        ):
-            return False
-
-        return verify_signature(
-            prev_transaction.recipient, transaction.signature, transaction.tx_hash
-        )
-
     def get_state(self) -> Blockchain:
         """
         Zwróć blockchain.
@@ -110,7 +126,7 @@ def validate_chain(chain: Blockchain) -> bool:
     - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
     - wszystkie transakcje w bloku są poprawne.
 
-    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny!
+    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
     """
     if len(chain.blocks[0].transactions) != 1:
         return False
