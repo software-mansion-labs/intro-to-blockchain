@@ -18,6 +18,7 @@ class Node:
     - blockchain,
     - klucz publiczny właściciela, wykorzystywany do przypisywania nowych coin'ów do konta.
     """
+
     blockchain: Blockchain
     owner: PublicKey
 

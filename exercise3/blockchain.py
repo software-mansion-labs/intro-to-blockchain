@@ -12,6 +12,7 @@ class Blockchain:
     Powinna zawierać:
     - listę bloków.
     """
+
     blocks: List[Block]
 
     def get_latest_block(self) -> Block:
@@ -27,9 +28,7 @@ class Blockchain:
         raise NotImplementedError()
 
     def get_transaction_by(
-        self,
-        tx_hash: Optional[bytes] = None,
-        previous_tx_hash: Optional[bytes] = None
+        self, tx_hash: Optional[bytes] = None, previous_tx_hash: Optional[bytes] = None
     ) -> Optional[Transaction]:
         """
         TODO: Przy pomocy podanego argumentu wyszukaj transakcję.
