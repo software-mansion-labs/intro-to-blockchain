@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import List
 
 from exercise2.transaction_registry import Transaction

@@ -25,7 +25,7 @@ class Node:
     def __init__(self, owner_public_key: PublicKey, initial_transaction: Transaction):
         """
         TODO: Przypisz wartości polom owner oraz blockchain przy pomocy podanych argumentów.
-        Wykorzystaj `initial_transaction` do stworzenia blockchain (hash poprzedniego bloku i nonce powinny być zerem).
+        Wykorzystaj `initial_transaction` do stworzenia blockchain.
         """
         raise NotImplementedError()
 

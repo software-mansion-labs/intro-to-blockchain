@@ -1,11 +1,9 @@
-import dataclasses
 from typing import List, Optional
 
 from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 
 
-@dataclasses.dataclass
 class Blockchain:
     """
     Klasa reprezentująca łańcuch bloków.
@@ -14,6 +12,12 @@ class Blockchain:
     """
 
     blocks: List[Block]
+
+    def __init__(self, initial_transaction: Transaction):
+        initial_block = Block(
+            prev_block_hash=b"0", transactions=[initial_transaction], nonce=0
+        )
+        self.blocks = [initial_block]
 
     def get_latest_block(self) -> Block:
         """
@@ -32,7 +36,8 @@ class Blockchain:
     ) -> Optional[Transaction]:
         """
         TODO: Przy pomocy podanego argumentu wyszukaj transakcję.
-        Można podać tylko jeden z dwóch argumentów. W zależności od tego, który został podany,
-        użyj go do znalezienia transakcji.
+        Można podać tylko jeden z dwóch argumentów.
+        W zależności od tego, który został podany, użyj go do znalezienia transakcji.
+        Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
         """
         raise NotImplementedError()
