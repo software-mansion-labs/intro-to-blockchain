@@ -1,3 +1,4 @@
+from time import time
 from typing import List
 
 from exercise2.transaction_registry import Transaction
@@ -25,7 +26,10 @@ class Block:
         TODO: Stwórz blok z podanych argumentów.
         Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
         """
-        raise NotImplementedError()
+        self.prev_block_hash = prev_block_hash
+        self.timestamp = int(time())
+        self.nonce = nonce
+        self.transactions = transactions
 
     def hash(self):
         """

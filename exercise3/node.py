@@ -7,7 +7,7 @@ from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
-DIFFICULTY = 18  # Oznacza ilość zerowych bitów na początku hasha
+DIFFICULTY = 10  # Oznacza ilość zerowych bitów na początku hasha
 MAX_256_INT = 2**256
 
 
@@ -59,10 +59,10 @@ class Node:
             return False
 
         if (
-                self.blockchain.get_transaction_by(
-                    previous_tx_hash=prev_transaction.tx_hash
-                )
-                is not None
+            self.blockchain.get_transaction_by(
+                previous_tx_hash=prev_transaction.tx_hash
+            )
+            is not None
         ):
             return False
 
@@ -81,7 +81,7 @@ class Node:
         - int.from_bytes(hash, "big")
         - MAX_256_INT >> DIFFICULTY
         """
-        while int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
+        while int.from_bytes(block.hash(), "big") > MAX_256_INT >> DIFFICULTY:
             block.nonce += 1
         return block
 
@@ -101,8 +101,7 @@ class Node:
             recipient=self.owner, previous_tx_hash=b"\x00"
         )
         new_block = Block(
-            prev_block_hash=self.blockchain.get_latest_block().hash,
-            timestamp=int(time()),
+            prev_block_hash=self.blockchain.get_latest_block().hash(),
             nonce=0,
             transactions=[transaction, new_coin_transaction],
         )
@@ -134,13 +133,13 @@ def validate_chain(chain: Blockchain) -> bool:
     honest_node = Node(generate_key_pair()[0], chain.blocks[0].transactions[0])
 
     for index, block in enumerate(chain.blocks[1:]):
-        if block.prev_block_hash != chain.blocks[index].hash:
+        if block.prev_block_hash != chain.blocks[index].hash():
             return False
 
         if block.timestamp < chain.blocks[index].timestamp:
             return False
 
-        if int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
+        if int.from_bytes(block.hash(), "big") > MAX_256_INT >> DIFFICULTY:
             return False
 
         new_coin_transaction_used = False
