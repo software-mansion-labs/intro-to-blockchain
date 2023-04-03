@@ -23,11 +23,10 @@ class Block:
     ):
         """
         TODO: Stwórz blok z podanych argumentów.
-        Aby pobrać aktualny czas użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
+        Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
         """
         raise NotImplementedError()
 
-    @property
     def hash(self):
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
