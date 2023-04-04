@@ -5,7 +5,7 @@ import copy
 
 class Transaction:
     """
-    Transakcja zawiera:
+    K:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
     """

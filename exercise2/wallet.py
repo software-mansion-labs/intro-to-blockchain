@@ -1,8 +1,7 @@
-from simple_cryptography import PrivateKey, PublicKey, sign
+from simple_cryptography import PrivateKey, PublicKey
 from exercise2.transaction_registry import (
     TransactionRegistry,
     Transaction,
-    SignedTransaction,
 )
 from typing import Tuple, List
 
@@ -43,15 +42,6 @@ class Wallet:
         """
         return len(self.get_available_transactions(registry))
 
-    def sign_transaction(self, transaction: Transaction) -> SignedTransaction:
-        """
-        TODO: Podpisz transakcję kluczem prywatnym.
-        Korzystając z funkcji sign z simple_cryptography, stwórz podpis danej transakcji.
-        Następnie zwróc podpisaną transakcję jako obiekt klasy SignedTransaction.
-        """
-        signature = sign(self._private_key, transaction.tx_hash)
-        return SignedTransaction.from_transaction(transaction, signature)
-
     def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
         """
         TODO: Przekaż coina do nowego właściciela.
@@ -69,6 +59,6 @@ class Wallet:
             return False
 
         new_transaction = Transaction(recipient, available_transactions[0].tx_hash)
-        signed_transaction = self.sign_transaction(new_transaction)
+        new_transaction.sign(self._private_key)
 
-        return registry.add_transaction(signed_transaction)
+        return registry.add_transaction(new_transaction)
