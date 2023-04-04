@@ -10,11 +10,11 @@ bob = Wallet(generate_key_pair())
 # Podajemy różne wartości dla previous_tx_hash, żeby hashe transakcji nie były takie same.
 # Bitcoin rozwiązuje to inaczej, ale o tym później...
 initial_transactions = [
-    Transaction(alice.public_key, b'0x00'),
-    Transaction(alice.public_key, b'0x01'),
-    Transaction(alice.public_key, b'0x02'),
-    Transaction(bob.public_key, b'0x00'),
-    Transaction(bob.public_key, b'0x01'),
+    Transaction(alice.public_key, b"0x00"),
+    Transaction(alice.public_key, b"0x01"),
+    Transaction(alice.public_key, b"0x02"),
+    Transaction(bob.public_key, b"0x00"),
+    Transaction(bob.public_key, b"0x01"),
 ]
 
 registry = TransactionRegistry(initial_transactions)

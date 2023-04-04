@@ -45,7 +45,9 @@ def test_is_transaction_available():
 
     reg = TransactionRegistry(initial_transactions + [new_transaction])
 
-    assert not reg.is_transaction_available(b'12345'), "Transaction does not exist, should return False"
+    assert not reg.is_transaction_available(
+        b"12345"
+    ), "Transaction does not exist, should return False"
 
     assert reg.is_transaction_available(new_transaction.tx_hash)
 
@@ -64,7 +66,7 @@ def test_verify_transaction_signature():
 
     assert reg.verify_transaction_signature(new_transaction)
 
-    incorrect_tx0 = Transaction(pub2, b'12345')
+    incorrect_tx0 = Transaction(pub2, b"12345")
     signature = sign(priv1, incorrect_tx0.tx_hash)
     incorrect_tx0 = SignedTransaction.from_transaction(incorrect_tx0, signature)
 
@@ -92,11 +94,11 @@ def test_add_transaction():
     assert reg.add_transaction(new_tx2)
     assert not reg.add_transaction(new_tx2)
 
-    new_tx3 = SignedTransaction(pub1, new_tx2.tx_hash, b'12345')
+    new_tx3 = SignedTransaction(pub1, new_tx2.tx_hash, b"12345")
 
     assert not reg.add_transaction(new_tx3)
 
-    new_tx4 = Transaction(pub1, b'12345')
+    new_tx4 = Transaction(pub1, b"12345")
     new_tx4 = SignedTransaction.from_transaction(new_tx4, sign(priv3, new_tx4.tx_hash))
 
     assert not reg.add_transaction(new_tx4)

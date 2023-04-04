@@ -9,6 +9,7 @@ class Transaction:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
     """
+
     recipient: PublicKey
     previous_tx_hash: bytes
     tx_hash: bytes
@@ -28,6 +29,7 @@ class SignedTransaction(Transaction):
     Podpisana transakcja zawiera dodatkowo:
     - Podpis transakcji, utworzony przy pomocy klucza prywatnego poprzedniego właściciela transakcji.
     """
+
     signature: bytes
 
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes, signature: bytes):
@@ -36,7 +38,9 @@ class SignedTransaction(Transaction):
 
     @staticmethod
     def from_transaction(transaction: Transaction, signature: bytes):
-        return SignedTransaction(transaction.recipient, transaction.previous_tx_hash, signature)
+        return SignedTransaction(
+            transaction.recipient, transaction.previous_tx_hash, signature
+        )
 
     def __repr__(self):
         return f"SignedTx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}.., signature: {self.signature[:6]})"
@@ -47,6 +51,7 @@ class TransactionRegistry:
     Klasa reprezentująca publiczny rejestr transakcji. Odpowiada za przyjmowanie nowych transakcji i ich
     przechowywanie.
     """
+
     transactions: List[Transaction]
 
     def __init__(self, initial_transactions: List[Transaction]):
@@ -95,13 +100,15 @@ class TransactionRegistry:
         if previous_transaction is None:
             return False
 
-        return verify_signature(previous_transaction.recipient, transaction.signature, transaction.tx_hash)
+        return verify_signature(
+            previous_transaction.recipient, transaction.signature, transaction.tx_hash
+        )
 
     def add_transaction(self, transaction: SignedTransaction) -> bool:
         """
         TODO: Dodaj nową transakcję do listy transakcji.
         Przed dodaniem upewnij się, że:
-        1.  Poprzednia transakcja jest niewykorzystana. 
+        1.  Poprzednia transakcja jest niewykorzystana.
         2.  Podpis transakcji jest prawidlowy.
         Wykorzystaj do tego dwie metody powyżej.
         Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.

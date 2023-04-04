@@ -1,5 +1,9 @@
 from simple_cryptography import PrivateKey, PublicKey, sign
-from exercise2.transaction_registry import TransactionRegistry, Transaction, SignedTransaction
+from exercise2.transaction_registry import (
+    TransactionRegistry,
+    Transaction,
+    SignedTransaction,
+)
 from typing import Tuple, List
 
 
@@ -13,7 +17,9 @@ class Wallet:
         # W przypadku naszych warsztatów nie musimy się tym przejmować.
         self._private_key = key_pair[1]
 
-    def get_available_transactions(self, registry: TransactionRegistry) -> List[Transaction]:
+    def get_available_transactions(
+        self, registry: TransactionRegistry
+    ) -> List[Transaction]:
         """
         TODO: Znajdź wszystkie niewykorzystane transakcje powiązane z tym portfelem.
         Spośród wszystkich transakcji w rejestrze (registry.transactions), zwróć te z których
@@ -21,8 +27,13 @@ class Wallet:
         - odbiorcą transakcji jest klucz publiczny tego portfela
         - transakcja jest niewykorzystana (metoda is_transaction_available w TransactionRegistry)
         """
-        wallet_transactions = filter(lambda tx: tx.recipient == self.public_key, registry.transactions)
-        available_transactions = filter(lambda tx: registry.is_transaction_available(tx.tx_hash), wallet_transactions)
+        wallet_transactions = filter(
+            lambda tx: tx.recipient == self.public_key, registry.transactions
+        )
+        available_transactions = filter(
+            lambda tx: registry.is_transaction_available(tx.tx_hash),
+            wallet_transactions,
+        )
 
         return list(available_transactions)
 
