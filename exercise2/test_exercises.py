@@ -36,7 +36,7 @@ def test_get_transaction():
     ), "get_transaction should return None for non-existent tx hash"
 
 
-def test_is_transaction_spent():
+def test_is_transaction_available():
     new_transaction = Transaction(pub2, initial_transactions[0].tx_hash)
 
     signature = sign(priv1, new_transaction.tx_hash)
@@ -45,12 +45,36 @@ def test_is_transaction_spent():
 
     reg = TransactionRegistry(initial_transactions + [new_transaction])
 
-    assert not reg.is_transaction_spent(new_transaction.tx_hash)
+    assert not reg.is_transaction_available(b'12345'), "Transaction does not exist, should return False"
 
-    assert not reg.is_transaction_spent(initial_transactions[1].tx_hash)
-    assert not reg.is_transaction_spent(initial_transactions[2].tx_hash)
+    assert reg.is_transaction_available(new_transaction.tx_hash)
 
-    assert reg.is_transaction_spent(initial_transactions[0].tx_hash)
+    assert reg.is_transaction_available(initial_transactions[1].tx_hash)
+    assert reg.is_transaction_available(initial_transactions[2].tx_hash)
+
+    assert not reg.is_transaction_available(initial_transactions[0].tx_hash)
+
+
+def test_verify_transaction_signature():
+    reg = TransactionRegistry(initial_transactions)
+
+    new_transaction = Transaction(pub2, initial_transactions[0].tx_hash)
+    signature = sign(priv1, new_transaction.tx_hash)
+    new_transaction = SignedTransaction.from_transaction(new_transaction, signature)
+
+    assert reg.verify_transaction_signature(new_transaction)
+
+    incorrect_tx0 = Transaction(pub2, b'12345')
+    signature = sign(priv1, incorrect_tx0.tx_hash)
+    incorrect_tx0 = SignedTransaction.from_transaction(incorrect_tx0, signature)
+
+    assert not reg.verify_transaction_signature(incorrect_tx0)
+
+    incorrect_tx1 = Transaction(pub2, initial_transactions[0].tx_hash)
+    signature = sign(priv3, incorrect_tx1.tx_hash)
+    incorrect_tx1 = SignedTransaction.from_transaction(incorrect_tx0, signature)
+
+    assert not reg.verify_transaction_signature(incorrect_tx1)
 
 
 def test_add_transaction():
@@ -63,19 +87,40 @@ def test_add_transaction():
     new_tx2 = SignedTransaction.from_transaction(new_tx2, sign(priv2, new_tx2.tx_hash))
 
     assert reg.add_transaction(new_tx1)
+    assert not reg.add_transaction(new_tx1)
+
     assert reg.add_transaction(new_tx2)
+    assert not reg.add_transaction(new_tx2)
+
+    new_tx3 = SignedTransaction(pub1, new_tx2.tx_hash, b'12345')
+
+    assert not reg.add_transaction(new_tx3)
+
+    new_tx4 = Transaction(pub1, b'12345')
+    new_tx4 = SignedTransaction.from_transaction(new_tx4, sign(priv3, new_tx4.tx_hash))
+
+    assert not reg.add_transaction(new_tx4)
 
 
-def test_get_unspent_transactions():
+def test_get_available_transactions():
     reg = TransactionRegistry(initial_transactions)
 
     wallet = Wallet((pub1, priv1))
 
-    txs = wallet.get_unspent_transactions(reg)
+    txs = wallet.get_available_transactions(reg)
 
     assert initial_transactions[0] in txs
     assert initial_transactions[1] in txs
     assert initial_transactions[2] in txs
+
+    tx = Transaction(pub2, initial_transactions[0].tx_hash)
+    tx = SignedTransaction.from_transaction(tx, sign(priv1, tx.tx_hash))
+
+    assert reg.add_transaction(tx)
+
+    txs = wallet.get_available_transactions(reg)
+
+    assert not initial_transactions[0] in txs
 
 
 def test_get_balance():
@@ -84,6 +129,12 @@ def test_get_balance():
     wallet = Wallet((pub1, priv1))
 
     assert wallet.get_balance(reg) == 3
+
+    tx = Transaction(pub2, initial_transactions[0].tx_hash)
+    tx = SignedTransaction.from_transaction(tx, sign(priv1, tx.tx_hash))
+
+    assert reg.add_transaction(tx)
+    assert wallet.get_balance(reg) == 2
 
 
 def test_transfer():
@@ -96,6 +147,14 @@ def test_transfer():
 
     assert wallet1.get_balance(reg) == 2
     assert wallet2.get_balance(reg) == 4
+
+    assert wallet1.transfer(reg, wallet2.public_key)
+    assert wallet1.transfer(reg, wallet2.public_key)
+
+    assert wallet1.get_balance(reg) == 0
+    assert wallet2.get_balance(reg) == 6
+
+    assert not wallet1.transfer(reg, wallet2.public_key)
 
 
 def test_sign_transaction():

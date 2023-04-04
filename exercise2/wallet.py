@@ -13,24 +13,24 @@ class Wallet:
         # W przypadku naszych warsztatów nie musimy się tym przejmować.
         self._private_key = key_pair[1]
 
-    def get_unspent_transactions(self, registry: TransactionRegistry) -> List[Transaction]:
+    def get_available_transactions(self, registry: TransactionRegistry) -> List[Transaction]:
         """
         TODO: Znajdź wszystkie niewykorzystane transakcje powiązane z tym portfelem.
         Spośród wszystkich transakcji w rejestrze (registry.transactions), zwróć te z których
         każda spełnia oba warunki:
-        - odbiorcą transakcji jest klucz publiczny portfela
-        - transakcja nie została wykorzystana (metoda is_transaction_spent w TransactionRegistry)
+        - odbiorcą transakcji jest klucz publiczny tego portfela
+        - transakcja jest niewykorzystana (metoda is_transaction_available w TransactionRegistry)
         """
         wallet_transactions = filter(lambda tx: tx.recipient == self.public_key, registry.transactions)
-        unspent_transactions = filter(lambda tx: not registry.is_transaction_spent(tx.tx_hash), wallet_transactions)
+        available_transactions = filter(lambda tx: registry.is_transaction_available(tx.tx_hash), wallet_transactions)
 
-        return list(unspent_transactions)
+        return list(available_transactions)
 
     def get_balance(self, registry: TransactionRegistry) -> int:
         """
-        TODO: Zwróć liczbę transakcji z wywołania get_unspent_transactions.
+        TODO: Zwróć liczbę transakcji z wywołania get_available_transactions.
         """
-        return len(self.get_unspent_transactions(registry))
+        return len(self.get_available_transactions(registry))
 
     def sign_transaction(self, transaction: Transaction) -> SignedTransaction:
         """
@@ -50,12 +50,12 @@ class Wallet:
         - Dodaj transakcję do rejestru.
         - Zwróć True jeśli wszystko się udało, False w przeciwnym wypadku.
         """
-        unspent_transactions = self.get_unspent_transactions(registry)
+        available_transactions = self.get_available_transactions(registry)
 
-        if len(unspent_transactions) == 0:
+        if len(available_transactions) == 0:
             return False
 
-        new_transaction = Transaction(recipient, unspent_transactions[0].tx_hash)
+        new_transaction = Transaction(recipient, available_transactions[0].tx_hash)
         signed_transaction = self.sign_transaction(new_transaction)
 
         return registry.add_transaction(signed_transaction)
