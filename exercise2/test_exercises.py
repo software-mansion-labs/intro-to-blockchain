@@ -11,15 +11,15 @@ from exercise2.wallet import Wallet
 (pub3, priv3) = generate_key_pair()
 
 initial_transactions = [
-    Transaction(pub1, b"0x00"),
-    Transaction(pub1, b"0x01"),
-    Transaction(pub1, b"0x02"),
-    Transaction(pub2, b"0x00"),
-    Transaction(pub2, b"0x01"),
-    Transaction(pub2, b"0x02"),
-    Transaction(pub3, b"0x00"),
-    Transaction(pub3, b"0x01"),
-    Transaction(pub3, b"0x02"),
+    Transaction(pub1, b"\x00"),
+    Transaction(pub1, b"\x01"),
+    Transaction(pub1, b"\x02"),
+    Transaction(pub2, b"\x00"),
+    Transaction(pub2, b"\x01"),
+    Transaction(pub2, b"\x02"),
+    Transaction(pub3, b"\x00"),
+    Transaction(pub3, b"\x01"),
+    Transaction(pub3, b"\x02"),
 ]
 
 
