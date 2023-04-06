@@ -46,7 +46,7 @@ class Block:
         """
         hashed_txs = b"\x00"
         for transaction in self.transactions:
-            hashed_txs = hash(hashed_txs + transaction.tx_hash)
+            hashed_txs = hash(hashed_txs + transaction.hash)
 
         return hash(
             self.prev_block_hash

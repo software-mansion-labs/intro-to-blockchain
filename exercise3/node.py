@@ -1,7 +1,7 @@
 from time import time
 from typing import Optional
 
-from exercise2.transaction_registry import Transaction, SignedTransaction
+from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature, generate_key_pair
@@ -85,7 +85,7 @@ class Node:
             block.nonce += 1
         return block
 
-    def add_transaction(self, transaction: SignedTransaction):
+    def add_transaction(self, transaction: Transaction):
         """
         TODO: Dodaj podaną transakcję do bloku.
         Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.

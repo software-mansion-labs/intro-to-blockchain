@@ -2,7 +2,7 @@ from time import time
 
 import pytest
 
-from exercise2.transaction_registry import Transaction, SignedTransaction
+from exercise2.transaction_registry import Transaction
 from exercise3.block import Block
 from exercise3.blockchain import Blockchain
 from exercise3.node import Node, validate_chain, DIFFICULTY, MAX_256_INT
@@ -57,7 +57,7 @@ def test_get_transaction():
     transaction = Transaction(pub1, b"\x00")
     chain = Blockchain(transaction)
 
-    assert chain.get_transaction_by(tx_hash=transaction.tx_hash) == transaction
+    assert chain.get_transaction_by(tx_hash=transaction.hash) == transaction
 
 
 def test_get_nonexistent_transaction():
@@ -141,14 +141,12 @@ def test_add_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    new_tx_signed = SignedTransaction.from_transaction(
-        new_tx, sign(priv1, new_tx.tx_hash)
-    )
-    node.add_transaction(new_tx_signed)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
+    new_tx.sign(priv1)
+    node.add_transaction(new_tx)
 
     assert node.blockchain.length() == 2
-    assert new_tx_signed in node.blockchain.get_latest_block().transactions
+    assert new_tx in node.blockchain.get_latest_block().transactions
 
 
 def test_add_transaction_throws_on_wrong_transaction():
@@ -156,28 +154,24 @@ def test_add_transaction_throws_on_wrong_transaction():
     node = Node(pub1, init_tx)
 
     # Użytkownik z kluczem publicznym `pub2` próbuje przekazać sobie coin'a należącego do pub1
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    new_tx_signed = SignedTransaction.from_transaction(
-        new_tx, sign(priv2, new_tx.tx_hash)
-    )
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
+    new_tx.sign(priv2)
 
     with pytest.raises(Exception):
-        node.add_transaction(new_tx_signed)
+        node.add_transaction(new_tx)
 
 
 def test_add_transaction_throws_on_spending_spent_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    new_tx_signed = SignedTransaction.from_transaction(
-        new_tx, sign(priv1, new_tx.tx_hash)
-    )
-    node.add_transaction(new_tx_signed)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
+    new_tx.sign(priv1)
+    node.add_transaction(new_tx)
 
     with pytest.raises(Exception):
         # Próba wydania wcześniej wydanego coin'a
-        node.add_transaction(new_tx_signed)
+        node.add_transaction(new_tx)
 
 
 def test_node_owner_gets_coin():
@@ -198,11 +192,9 @@ def test_validate_valid_chain():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    new_tx_signed = SignedTransaction.from_transaction(
-        new_tx, sign(priv1, new_tx.tx_hash)
-    )
-    node.add_transaction(new_tx_signed)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
+    new_tx.sign(priv1)
+    node.add_transaction(new_tx)
 
     assert validate_chain(node.blockchain)
 
@@ -218,16 +210,14 @@ def test_validate_chain_with_wrong_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
-    new_tx_signed = SignedTransaction.from_transaction(
-        new_tx, sign(priv2, new_tx.tx_hash)
-    )
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
+    new_tx.sign(priv2)
 
     new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
     new_block = Block(
         prev_block_hash=node.blockchain.get_latest_block().hash(),
         nonce=0,
-        transactions=[new_tx_signed, new_coin_transaction],
+        transactions=[new_tx, new_coin_transaction],
     )
 
     new_block = node.find_nonce(new_block)
