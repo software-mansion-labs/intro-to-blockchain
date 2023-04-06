@@ -8,7 +8,7 @@ class Transaction:
     Transakcja zawiera:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
-    - wlasny hash, wyliczony na podstawie dwóch pól powyżej
+    - własny hash, wyliczony na podstawie dwóch pól powyżej
     - opcjonalny podpis
     """
 
@@ -24,9 +24,9 @@ class Transaction:
         - previous_tx_hash - hash poprzedniej transakcji, z której zabierane są środki
         """
         self.recipient = recipient
-        self.previous_hash = previous_tx_hash
+        self.previous_tx_hash = previous_tx_hash
 
-        self.hash = hash(self.recipient.to_bytes() + self.previous_hash)
+        self.hash = hash(self.recipient.to_bytes() + self.previous_tx_hash)
 
     def sign(self, private_key: PrivateKey):
         """
@@ -35,7 +35,7 @@ class Transaction:
         self.signature = sign(private_key, self.hash)
 
     def __repr__(self):
-        return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_hash[:6]}..)"
+        return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
 
 
 class TransactionRegistry:
@@ -74,7 +74,7 @@ class TransactionRegistry:
             return False
 
         for tx in self.transactions:
-            if tx.previous_hash == tx_hash:
+            if tx.previous_tx_hash == tx_hash:
                 return False
         return True
 
@@ -90,7 +90,7 @@ class TransactionRegistry:
         if transaction.signature is None:
             return False
 
-        previous_transaction = self.get_transaction(transaction.previous_hash)
+        previous_transaction = self.get_transaction(transaction.previous_tx_hash)
 
         if previous_transaction is None:
             return False
@@ -111,7 +111,7 @@ class TransactionRegistry:
         if not self.verify_transaction_signature(transaction):
             return False
 
-        if not self.is_transaction_available(transaction.previous_hash):
+        if not self.is_transaction_available(transaction.previous_tx_hash):
             return False
 
         self.transactions.append(transaction)
