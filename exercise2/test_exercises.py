@@ -1,4 +1,4 @@
-from simple_cryptography import generate_key_pair, sign, verify_signature
+from simple_cryptography import generate_key_pair
 
 from exercise2.transaction_registry import (
     Transaction,
@@ -27,7 +27,7 @@ def test_get_transaction():
     reg = TransactionRegistry(initial_transactions)
 
     assert (
-        reg.get_transaction(initial_transactions[2].tx_hash) == initial_transactions[2]
+        reg.get_transaction(initial_transactions[2].hash) == initial_transactions[2]
     )
 
     assert (
@@ -36,7 +36,7 @@ def test_get_transaction():
 
 
 def test_is_transaction_available():
-    new_transaction = Transaction(pub2, initial_transactions[0].tx_hash)
+    new_transaction = Transaction(pub2, initial_transactions[0].hash)
     new_transaction.sign(priv1)
 
     reg = TransactionRegistry(initial_transactions + [new_transaction])
@@ -45,18 +45,18 @@ def test_is_transaction_available():
         b"12345"
     ), "Transaction does not exist, should return False"
 
-    assert reg.is_transaction_available(new_transaction.tx_hash)
+    assert reg.is_transaction_available(new_transaction.hash)
 
-    assert reg.is_transaction_available(initial_transactions[1].tx_hash)
-    assert reg.is_transaction_available(initial_transactions[2].tx_hash)
+    assert reg.is_transaction_available(initial_transactions[1].hash)
+    assert reg.is_transaction_available(initial_transactions[2].hash)
 
-    assert not reg.is_transaction_available(initial_transactions[0].tx_hash)
+    assert not reg.is_transaction_available(initial_transactions[0].hash)
 
 
 def test_verify_transaction_signature():
     reg = TransactionRegistry(initial_transactions)
 
-    new_transaction = Transaction(pub2, initial_transactions[0].tx_hash)
+    new_transaction = Transaction(pub2, initial_transactions[0].hash)
     new_transaction.sign(priv1)
 
     assert reg.verify_transaction_signature(new_transaction)
@@ -66,7 +66,7 @@ def test_verify_transaction_signature():
 
     assert not reg.verify_transaction_signature(incorrect_tx0)
 
-    incorrect_tx1 = Transaction(pub2, initial_transactions[0].tx_hash)
+    incorrect_tx1 = Transaction(pub2, initial_transactions[0].hash)
     incorrect_tx1.sign(priv2)
 
     assert not reg.verify_transaction_signature(incorrect_tx1)
@@ -75,10 +75,10 @@ def test_verify_transaction_signature():
 def test_add_transaction():
     reg = TransactionRegistry(initial_transactions)
 
-    new_tx1 = Transaction(pub2, initial_transactions[0].tx_hash)
+    new_tx1 = Transaction(pub2, initial_transactions[0].hash)
     new_tx1.sign(priv1)
 
-    new_tx2 = Transaction(pub3, new_tx1.tx_hash)
+    new_tx2 = Transaction(pub3, new_tx1.hash)
     new_tx2.sign(priv2)
 
     assert reg.add_transaction(new_tx1)
@@ -87,7 +87,7 @@ def test_add_transaction():
     assert reg.add_transaction(new_tx2)
     assert not reg.add_transaction(new_tx2)
 
-    new_tx3 = Transaction(pub1, new_tx2.tx_hash)
+    new_tx3 = Transaction(pub1, new_tx2.hash)
     new_tx3.sign(priv1)
 
     assert not reg.add_transaction(new_tx3)
@@ -109,7 +109,7 @@ def test_get_available_transactions():
     assert initial_transactions[1] in txs
     assert initial_transactions[2] in txs
 
-    tx = Transaction(pub2, initial_transactions[0].tx_hash)
+    tx = Transaction(pub2, initial_transactions[0].hash)
     tx.sign(priv1)
 
     assert reg.add_transaction(tx)
@@ -126,7 +126,7 @@ def test_get_balance():
 
     assert wallet.get_balance(reg) == 3
 
-    tx = Transaction(pub2, initial_transactions[0].tx_hash)
+    tx = Transaction(pub2, initial_transactions[0].hash)
     tx.sign(priv1)
 
     assert reg.add_transaction(tx)

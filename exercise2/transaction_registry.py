@@ -5,14 +5,16 @@ import copy
 
 class Transaction:
     """
-    K:
+    Transakcja zawiera:
     - odbiorcę transakcji (klucz publiczny)
     - hash poprzedniej transakcji
+    - wlasny hash, wyliczony na podstawie dwóch pól powyżej
+    - opcjonalny podpis
     """
 
     recipient: PublicKey
-    previous_tx_hash: bytes
-    tx_hash: bytes
+    previous_hash: bytes
+    hash: bytes
     signature: Optional[bytes]
 
     def __init__(self, recipient: PublicKey, previous_tx_hash: bytes):
@@ -22,18 +24,18 @@ class Transaction:
         - previous_tx_hash - hash poprzedniej transakcji, z której zabierane są środki
         """
         self.recipient = recipient
-        self.previous_tx_hash = previous_tx_hash
+        self.previous_hash = previous_tx_hash
 
-        self.tx_hash = hash(self.recipient.to_bytes() + self.previous_tx_hash)
+        self.hash = hash(self.recipient.to_bytes() + self.previous_hash)
 
     def sign(self, private_key: PrivateKey):
         """
         Podpisuje transakcję przy pomocy podanego klucza prywatnego.
         """
-        self.signature = sign(private_key, self.tx_hash)
+        self.signature = sign(private_key, self.hash)
 
     def __repr__(self):
-        return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_tx_hash[:6]}..)"
+        return f"Tx(recipient: {self.recipient.to_bytes()[-6:]}.., prev_hash: {self.previous_hash[:6]}..)"
 
 
 class TransactionRegistry:
@@ -54,7 +56,7 @@ class TransactionRegistry:
         w przeciwnym przypadku zwróć None.
         """
         for tx in self.transactions:
-            if tx.tx_hash == tx_hash:
+            if tx.hash == tx_hash:
                 return tx
         return None
 
@@ -72,7 +74,7 @@ class TransactionRegistry:
             return False
 
         for tx in self.transactions:
-            if tx.previous_tx_hash == tx_hash:
+            if tx.previous_hash == tx_hash:
                 return False
         return True
 
@@ -88,13 +90,13 @@ class TransactionRegistry:
         if transaction.signature is None:
             return False
 
-        previous_transaction = self.get_transaction(transaction.previous_tx_hash)
+        previous_transaction = self.get_transaction(transaction.previous_hash)
 
         if previous_transaction is None:
             return False
 
         return verify_signature(
-            previous_transaction.recipient, transaction.signature, transaction.tx_hash
+            previous_transaction.recipient, transaction.signature, transaction.hash
         )
 
     def add_transaction(self, transaction: Transaction) -> bool:
@@ -109,7 +111,7 @@ class TransactionRegistry:
         if not self.verify_transaction_signature(transaction):
             return False
 
-        if not self.is_transaction_available(transaction.previous_tx_hash):
+        if not self.is_transaction_available(transaction.previous_hash):
             return False
 
         self.transactions.append(transaction)

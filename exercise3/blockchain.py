@@ -44,9 +44,9 @@ class Blockchain:
             for transaction in block.transactions:
                 if (
                     tx_hash is not None
-                    and transaction.tx_hash == tx_hash
+                    and transaction.hash == tx_hash
                     or previous_tx_hash is not None
-                    and transaction.previous_tx_hash == previous_tx_hash
+                    and transaction.previous_hash == previous_tx_hash
                 ):
                     return transaction
 

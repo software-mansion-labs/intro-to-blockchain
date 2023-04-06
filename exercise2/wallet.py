@@ -30,7 +30,7 @@ class Wallet:
             lambda tx: tx.recipient == self.public_key, registry.transactions
         )
         available_transactions = filter(
-            lambda tx: registry.is_transaction_available(tx.tx_hash),
+            lambda tx: registry.is_transaction_available(tx.hash),
             wallet_transactions,
         )
 
@@ -58,7 +58,7 @@ class Wallet:
         if len(available_transactions) == 0:
             return False
 
-        new_transaction = Transaction(recipient, available_transactions[0].tx_hash)
+        new_transaction = Transaction(recipient, available_transactions[0].hash)
         new_transaction.sign(self._private_key)
 
         return registry.add_transaction(new_transaction)

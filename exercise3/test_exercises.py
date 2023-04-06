@@ -34,7 +34,7 @@ def test_get_transaction():
     block = Block(b"\x00", 0, 0, [transaction])
     chain = Blockchain([block])
 
-    assert chain.get_transaction_by(tx_hash=transaction.tx_hash) == transaction
+    assert chain.get_transaction_by(tx_hash=transaction.hash) == transaction
 
 
 def test_get_nonexistent_transaction():
@@ -70,7 +70,7 @@ def test_add_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
     node.add_transaction(new_tx)
 
@@ -83,7 +83,7 @@ def test_add_transaction_throws_on_wrong_transaction():
     node = Node(pub1, init_tx)
 
     # Użytkownik z kluczem publicznym `pub2` próbuje przekazać sobie coin'a należącego do pub1
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv2)
 
     with pytest.raises(Exception):
@@ -94,7 +94,7 @@ def test_add_transaction_throws_on_spending_spent_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
     node.add_transaction(new_tx)
 
@@ -107,7 +107,7 @@ def test_validate_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
 
     assert node.validate_transaction(new_tx)
@@ -118,14 +118,14 @@ def test_validate_transaction_throws_on_wrong_tx():
     node = Node(pub1, init_tx)
 
     # Użytkownik, do którego nie należy coin, próbuje go wydać
-    wrong_user_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    wrong_user_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     wrong_user_tx.sign(priv2)
 
     # Coin, który próbujemy wydać nie istnieje
     coin_does_not_exist_tx = Transaction(recipient=pub2, previous_tx_hash=b"\x03")
     coin_does_not_exist_tx.sign(priv1)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
     node.add_transaction(new_tx)
 
@@ -139,7 +139,7 @@ def test_validate_valid_chain():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
     node.add_transaction(new_tx)
 
@@ -156,7 +156,7 @@ def test_validate_chain_with_wrong_transaction():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv2)
 
     new_coin_transaction = Transaction(recipient=node.owner, previous_tx_hash=b"\x00")
@@ -206,7 +206,7 @@ def test_node_owner_gets_coin():
     init_tx = Transaction(recipient=pub1, previous_tx_hash=b"\x00")
     node = Node(pub1, init_tx)
 
-    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.tx_hash)
+    new_tx = Transaction(recipient=pub2, previous_tx_hash=init_tx.hash)
     new_tx.sign(priv1)
     node.add_transaction(new_tx)
 

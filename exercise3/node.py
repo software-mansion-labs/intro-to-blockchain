@@ -77,21 +77,21 @@ class Node:
             return False
 
         prev_transaction = self.blockchain.get_transaction_by(
-            tx_hash=transaction.previous_tx_hash
+            tx_hash=transaction.previous_hash
         )
         if prev_transaction is None:
             return False
 
         if (
             self.blockchain.get_transaction_by(
-                previous_tx_hash=prev_transaction.tx_hash
+                previous_tx_hash=prev_transaction.hash
             )
             is not None
         ):
             return False
 
         return verify_signature(
-            prev_transaction.recipient, transaction.signature, transaction.tx_hash
+            prev_transaction.recipient, transaction.signature, transaction.hash
         )
 
     def get_state(self) -> Blockchain:
@@ -129,7 +129,7 @@ def validate_chain(chain: Blockchain) -> bool:
 
         new_coin_transaction_used = False
         for transaction in block.transactions:
-            if transaction.previous_tx_hash == b"\00":
+            if transaction.previous_hash == b"\00":
                 if new_coin_transaction_used:
                     return False
                 new_coin_transaction_used = True
