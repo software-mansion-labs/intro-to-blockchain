@@ -1,4 +1,3 @@
-from time import time
 from typing import Optional
 
 from exercise2.transaction_registry import Transaction
@@ -30,7 +29,7 @@ class Node:
         self.owner = owner_public_key
         self.blockchain = Blockchain(initial_transaction)
 
-    def validate_transaction(self, transaction: SignedTransaction) -> bool:
+    def validate_transaction(self, transaction: Transaction) -> bool:
         """
         TODO: Sprawdź poprawność transakcji.
         Transakcja jest poprawna, jeśli:
@@ -59,15 +58,13 @@ class Node:
             return False
 
         if (
-            self.blockchain.get_transaction_by(
-                previous_tx_hash=prev_transaction.tx_hash
-            )
+            self.blockchain.get_transaction_by(previous_tx_hash=prev_transaction.hash)
             is not None
         ):
             return False
 
         return verify_signature(
-            prev_transaction.recipient, transaction.signature, transaction.tx_hash
+            prev_transaction.recipient, transaction.signature, transaction.hash
         )
 
     def find_nonce(self, block: Block) -> Optional[Block]:
