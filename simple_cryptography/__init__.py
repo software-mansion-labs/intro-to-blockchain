@@ -16,9 +16,11 @@ def hash(value: bytes) -> bytes:
     digest.update(value)
     return digest.finalize()
 
+
 @dataclass
 class PrivateKey:
     value: rsa.RSAPrivateKey
+
 
 @dataclass
 class PublicKey:
@@ -26,6 +28,7 @@ class PublicKey:
 
     def to_bytes(self) -> bytes:
         return self.value.public_bytes(Encoding.OpenSSH, PublicFormat.OpenSSH)
+
 
 def generate_key_pair() -> Tuple[PublicKey, PrivateKey]:
     private_key = rsa.generate_private_key(
@@ -35,15 +38,17 @@ def generate_key_pair() -> Tuple[PublicKey, PrivateKey]:
     public_key = private_key.public_key()
     return (PublicKey(public_key), PrivateKey(private_key))
 
+
 def asymmetric_encrypt(public_key: PublicKey, message: bytes) -> bytes:
     return public_key.value.encrypt(
         message,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
+
 
 def asymmetric_decrypt(private_key: PrivateKey, encrypted_message: bytes) -> bytes:
     plaintext = private_key.value.decrypt(
@@ -51,21 +56,22 @@ def asymmetric_decrypt(private_key: PrivateKey, encrypted_message: bytes) -> byt
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
     return plaintext
+
 
 def sign(private_key: PrivateKey, message: bytes) -> bytes:
     signature = private_key.value.sign(
         message,
         padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.MAX_LENGTH
+            mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
         ),
-        hashes.SHA256()
+        hashes.SHA256(),
     )
     return signature
+
 
 def verify_signature(public_key: PublicKey, signature: bytes, message: bytes) -> bool:
     try:
@@ -73,10 +79,9 @@ def verify_signature(public_key: PublicKey, signature: bytes, message: bytes) ->
             signature,
             message,
             padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
+                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
             ),
-            hashes.SHA256()
+            hashes.SHA256(),
         )
 
     except InvalidSignature:

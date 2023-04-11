@@ -1,5 +1,10 @@
-
-from simple_cryptography import PublicKey, sign, verify_signature, generate_key_pair, hash
+from simple_cryptography import (
+    PublicKey,
+    sign,
+    verify_signature,
+    generate_key_pair,
+    hash,
+)
 
 
 UMOWA = """
@@ -12,7 +17,6 @@ Zgadzam się na wszystko
 
 
 class Alice:
-
     def __init__(self):
         """
         TODO - wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography
@@ -29,14 +33,14 @@ class Alice:
             - hash
             - sign
         """
-        return sign(self._private_key, hash(bytes(UMOWA, 'utf-8')))
-    
+        return sign(self._private_key, hash(bytes(UMOWA, "utf-8")))
+
     def get_public_key(self) -> PublicKey:
         return self._public_key
 
-class Bob:
 
-    def __init__(self, alice: Alice): 
+class Bob:
+    def __init__(self, alice: Alice):
         self.alice = alice
 
     def validate_signature(self, signature) -> bool:
@@ -48,4 +52,6 @@ class Bob:
             - hash
             - verify_signature
         """
-        return verify_signature(self.alice.get_public_key(), signature, hash(bytes(UMOWA, 'utf-8')))
+        return verify_signature(
+            self.alice.get_public_key(), signature, hash(bytes(UMOWA, "utf-8"))
+        )

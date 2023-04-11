@@ -83,7 +83,9 @@ class Node:
         - int.from_bytes(hash, "big")
         - self._max_int_shifted_by_difficulty()
         """
-        while int.from_bytes(block.hash(), "big") > self._max_int_shifted_by_difficulty():
+        while (
+            int.from_bytes(block.hash(), "big") > self._max_int_shifted_by_difficulty()
+        ):
             block.nonce += 1
         return block
 

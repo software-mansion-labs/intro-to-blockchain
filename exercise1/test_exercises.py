@@ -3,12 +3,18 @@ from exercise1.public_key_2 import Alice, Bob
 from exercise1 import signature_3
 from simple_cryptography import generate_key_pair, sign
 
+
 def test_hash():
-    assert Transaction(1, 2, "xDDDDDD").hash() == b"'sP[B9\x99\xec\xc1`\xf7\xcb?\xe9\xf6R\xf8\xe3v\x1f4\t\xecX%\xec\xc0\x0f{\xad\x0fN"
+    assert (
+        Transaction(1, 2, "xDDDDDD").hash()
+        == b"'sP[B9\x99\xec\xc1`\xf7\xcb?\xe9\xf6R\xf8\xe3v\x1f4\t\xecX%\xec\xc0\x0f{\xad\x0fN"
+    )
+
 
 secrect_message = """
 To jest tajna wiadomość która nigdy nie powinna zostać odczytana
 """
+
 
 def test_encryption():
     bob = Bob()
@@ -17,7 +23,7 @@ def test_encryption():
     assert encrypted != secrect_message
     decrypted = bob.decrypt(encrypted)
     assert secrect_message == decrypted
-    
+
 
 def test_signature():
     alice = signature_3.Alice()

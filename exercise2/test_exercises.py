@@ -26,9 +26,7 @@ initial_transactions = [
 def test_get_transaction():
     reg = TransactionRegistry(initial_transactions)
 
-    assert (
-        reg.get_transaction(initial_transactions[2].hash) == initial_transactions[2]
-    )
+    assert reg.get_transaction(initial_transactions[2].hash) == initial_transactions[2]
 
     assert (
         reg.get_transaction(b"12345") is None

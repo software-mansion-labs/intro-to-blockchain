@@ -1,5 +1,11 @@
 from dataclasses import dataclass
-from simple_cryptography import PrivateKey, PublicKey, generate_key_pair, asymmetric_decrypt, asymmetric_encrypt
+from simple_cryptography import (
+    PrivateKey,
+    PublicKey,
+    generate_key_pair,
+    asymmetric_decrypt,
+    asymmetric_encrypt,
+)
 
 
 class Alice:
@@ -15,7 +21,7 @@ class Alice:
             - asymmetric_encrypt
         """
         k = self.bob.get_public_key()
-        return asymmetric_encrypt(k, bytes(message, 'utf-8'))
+        return asymmetric_encrypt(k, bytes(message, "utf-8"))
 
 
 class Bob:
