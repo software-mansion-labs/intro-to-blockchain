@@ -55,7 +55,10 @@ class TransactionRegistry:
         Jeśli w liście transakcji istnieje transakcja z podanym tx_hash, zwróć ją,
         w przeciwnym przypadku zwróć None.
         """
-        raise NotImplementedError()
+        for tx in self.transactions:
+            if tx.hash == tx_hash:
+                return tx
+        return None
 
     def is_transaction_available(self, tx_hash: bytes) -> bool:
         """
@@ -67,7 +70,13 @@ class TransactionRegistry:
             False.
         3. Jeśli w poprzednich krokach nic nie zwrócono - transakcja jest dostępna, zwróć True.
         """
-        raise NotImplementedError()
+        if self.get_transaction(tx_hash) is None:
+            return False
+
+        for tx in self.transactions:
+            if tx.previous_tx_hash == tx_hash:
+                return False
+        return True
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
@@ -78,7 +87,17 @@ class TransactionRegistry:
             Wykorzystaj do tego metodę verify_signature z simple_cryptography.
         Przypomnienie: podpisywany jest hash transakcji.
         """
-        raise NotImplementedError()
+        if transaction.signature is None:
+            return False
+
+        previous_transaction = self.get_transaction(transaction.previous_tx_hash)
+
+        if previous_transaction is None:
+            return False
+
+        return verify_signature(
+            previous_transaction.recipient, transaction.signature, transaction.hash
+        )
 
     def add_transaction(self, transaction: Transaction) -> bool:
         """
@@ -89,4 +108,11 @@ class TransactionRegistry:
         Wykorzystaj do tego dwie metody powyżej.
         Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
         """
-        raise NotImplementedError()
+        if not self.verify_transaction_signature(transaction):
+            return False
+
+        if not self.is_transaction_available(transaction.previous_tx_hash):
+            return False
+
+        self.transactions.append(transaction)
+        return True
