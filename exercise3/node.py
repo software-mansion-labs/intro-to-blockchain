@@ -69,6 +69,9 @@ class Node:
             prev_transaction.recipient, transaction.signature, transaction.hash
         )
 
+    def _max_int_shifted_by_difficulty(self):
+        return MAX_256_INT >> DIFFICULTY
+
     def find_nonce(self, block: Block) -> Optional[Block]:
         """
         TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
@@ -78,9 +81,9 @@ class Node:
 
         Przydatne operacje:
         - int.from_bytes(hash, "big")
-        - MAX_256_INT >> DIFFICULTY
+        - self._max_int_shifted_by_difficulty()
         """
-        while int.from_bytes(block.hash(), "big") > MAX_256_INT >> DIFFICULTY:
+        while int.from_bytes(block.hash(), "big") > self._max_int_shifted_by_difficulty():
             block.nonce += 1
         return block
 
