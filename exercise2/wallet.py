@@ -37,10 +37,10 @@ class Wallet:
     def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
         """
         TODO: Przekaż coina do nowego właściciela.
-        1.  Znajdź dowolną niewykorzystaną transakcję, jeśli takiej nie ma, zwróć False.
+        1.  Znajdź dowolną niewykorzystaną transakcję dla tego portfela, jeśli takiej nie ma, zwróć False.
         2.  Stwórz nową transakcję, z podanym odbiorcą (recipient) oraz polem previous_tx_hash ustawionym na
             tx_hash znalezionej transakcji.
-        3.  Podpisz nową transakcję korzystając z sign_transaction.
+        3.  Podpisz nową transakcję korzystając z Transaction.sign.
         4.  Dodaj transakcję do rejestru.
         5.  Zwróć True jeśli wszystko się udało, False w przeciwnym wypadku. (Pamiętaj że add_transaction też zwraca
             True lub False w zależności od powodzenia)
