@@ -53,26 +53,29 @@ def test_length():
     assert chain.length() == 1
 
 
-def test_get_transaction():
+def test_get_tx_by_hash():
     transaction = Transaction(pub1, b"\x00")
     chain = Blockchain(transaction)
 
-    assert chain.get_transaction_by(tx_hash=transaction.hash) == transaction
+    assert chain.get_tx_by_hash(tx_hash=transaction.hash) == transaction
+
+
+def test_get_tx_by_previous_tx_hash():
+    transaction = Transaction(pub1, b"\x00")
+    transaction2 = Transaction(pub2, transaction.hash)
+
+    chain = Blockchain(transaction)
+    chain.blocks.append(Block(chain.get_latest_block().hash(), [transaction2]))
+
+    assert chain.get_tx_by_previous_tx_hash(transaction.hash) == transaction2
 
 
 def test_get_nonexistent_transaction():
     transaction = Transaction(pub1, b"\x00")
     chain = Blockchain(transaction)
 
-    assert chain.get_transaction_by(tx_hash=b"\x00") is None
-
-
-def test_get_transaction_by_raises_at_two_arguments():
-    transaction = Transaction(pub1, b"0")
-    chain = Blockchain(transaction)
-
-    with pytest.raises(Exception):
-        chain.get_transaction_by(b"\x00", b"\x00")
+    assert chain.get_tx_by_hash(tx_hash=b"\x00") is None
+    assert chain.get_tx_by_previous_tx_hash(previous_tx_hash=b"\x01") is None
 
 
 # Node

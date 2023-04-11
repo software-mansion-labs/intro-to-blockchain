@@ -51,14 +51,16 @@ class Node:
         if transaction.signature is None:
             return False
 
-        prev_transaction = self.blockchain.get_transaction_by(
+        prev_transaction = self.blockchain.get_tx_by_hash(
             tx_hash=transaction.previous_tx_hash
         )
         if prev_transaction is None:
             return False
 
         if (
-            self.blockchain.get_transaction_by(previous_tx_hash=prev_transaction.hash)
+            self.blockchain.get_tx_by_previous_tx_hash(
+                previous_tx_hash=prev_transaction.hash
+            )
             is not None
         ):
             return False

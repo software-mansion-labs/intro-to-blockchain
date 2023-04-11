@@ -31,28 +31,30 @@ class Blockchain:
         """
         return len(self.blocks)
 
-    def get_transaction_by(
-        self, tx_hash: Optional[bytes] = None, previous_tx_hash: Optional[bytes] = None
-    ) -> Optional[Transaction]:
+    def get_tx_by_hash(self, tx_hash: bytes) -> Optional[Transaction]:
         """
-        TODO: Przy pomocy podanego argumentu wyszukaj transakcję.
-        Można podać tylko jeden z dwóch argumentów.
-        W zależności od tego, który został podany, użyj go do znalezienia transakcji.
+        TODO: Przy pomocy hasha wyszukaj transakcję.
         Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
+        Jeśli transakcja o podanym hashu nie istnieje zwróć None.
         """
-        if tx_hash is not None and previous_tx_hash is not None:
-            raise Exception(
-                "Arguments tx_hash and previous_tx_hash are mutually exclusive."
-            )
-
         for block in self.blocks:
             for transaction in block.transactions:
-                if (
-                    tx_hash is not None
-                    and transaction.hash == tx_hash
-                    or previous_tx_hash is not None
-                    and transaction.previous_tx_hash == previous_tx_hash
-                ):
+                if transaction.hash == tx_hash:
+                    return transaction
+
+        return None
+
+    def get_tx_by_previous_tx_hash(
+        self, previous_tx_hash: bytes
+    ) -> Optional[Transaction]:
+        """
+        TODO: Wyszukaj transakcję o polu previous_tx_hash równym temu podanemu w argumencie.
+        Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
+        Jeśli transakcja z podanym previous_tx_hash nie istnieje zwróć None.
+        """
+        for block in self.blocks:
+            for transaction in block.transactions:
+                if transaction.previous_tx_hash == previous_tx_hash:
                     return transaction
 
         return None
