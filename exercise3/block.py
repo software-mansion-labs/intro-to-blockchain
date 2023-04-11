@@ -26,7 +26,10 @@ class Block:
         TODO: Stwórz blok z podanych argumentów.
         Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
         """
-        raise NotImplementedError()
+        self.prev_block_hash = prev_block_hash
+        self.timestamp = int(time())
+        self.nonce = nonce
+        self.transactions = transactions
 
     def hash(self):
         """
@@ -41,4 +44,13 @@ class Block:
             - zaktualizuj hash wszystkich transakcji, hashem aktualnej
              all_tx_hash = hash(all_tx_hash + current_tx_hash)
         """
-        raise NotImplementedError()
+        hashed_txs = b"\x00"
+        for transaction in self.transactions:
+            hashed_txs = hash(hashed_txs + transaction.hash)
+
+        return hash(
+            self.prev_block_hash
+            + self.timestamp.to_bytes(32, "big")
+            + self.nonce.to_bytes(32, "big")
+            + hashed_txs
+        )
