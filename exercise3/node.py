@@ -34,7 +34,7 @@ class Node:
         TODO: Sprawdź poprawność transakcji.
         Transakcja jest poprawna, jeśli:
         - ma podpis,
-        - podpis jest poprawny
+        - podpis jest poprawny (`transaction` jest podpisane przez osobę posiadającą coina),
         - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
 
         Do weryfikacji podpisu skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
