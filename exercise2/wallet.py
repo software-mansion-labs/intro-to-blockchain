@@ -26,21 +26,13 @@ class Wallet:
         - odbiorcą transakcji jest klucz publiczny tego portfela
         - transakcja jest niewykorzystana (metoda is_transaction_available w TransactionRegistry)
         """
-        wallet_transactions = filter(
-            lambda tx: tx.recipient == self.public_key, registry.transactions
-        )
-        available_transactions = filter(
-            lambda tx: registry.is_transaction_available(tx.hash),
-            wallet_transactions,
-        )
-
-        return list(available_transactions)
+        raise NotImplementedError()
 
     def get_balance(self, registry: TransactionRegistry) -> int:
         """
         TODO: Zwróć liczbę transakcji z wywołania get_available_transactions.
         """
-        return len(self.get_available_transactions(registry))
+        raise NotImplementedError()
 
     def transfer(self, registry: TransactionRegistry, recipient: PublicKey) -> bool:
         """
@@ -53,12 +45,4 @@ class Wallet:
         5.  Zwróć True jeśli wszystko się udało, False w przeciwnym wypadku. (Pamiętaj że add_transaction też zwraca
             True lub False w zależności od powodzenia)
         """
-        available_transactions = self.get_available_transactions(registry)
-
-        if len(available_transactions) == 0:
-            return False
-
-        new_transaction = Transaction(recipient, available_transactions[0].hash)
-        new_transaction.sign(self._private_key)
-
-        return registry.add_transaction(new_transaction)
+        raise NotImplementedError()

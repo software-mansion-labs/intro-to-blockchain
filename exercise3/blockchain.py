@@ -23,13 +23,13 @@ class Blockchain:
         """
         TODO: Zwróć ostatni blok.
         """
-        return self.blocks[-1]
+        raise NotImplementedError()
 
     def length(self) -> int:
         """
         TODO: Zwróć długość łańcucha.
         """
-        return len(self.blocks)
+        raise NotImplementedError()
 
     def get_tx_by_hash(self, tx_hash: bytes) -> Optional[Transaction]:
         """
@@ -37,12 +37,7 @@ class Blockchain:
         Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
         Jeśli transakcja o podanym hashu nie istnieje zwróć None.
         """
-        for block in self.blocks:
-            for transaction in block.transactions:
-                if transaction.hash == tx_hash:
-                    return transaction
-
-        return None
+        raise NotImplementedError()
 
     def get_tx_by_previous_tx_hash(
         self, previous_tx_hash: bytes
@@ -52,9 +47,4 @@ class Blockchain:
         Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
         Jeśli transakcja z podanym previous_tx_hash nie istnieje zwróć None.
         """
-        for block in self.blocks:
-            for transaction in block.transactions:
-                if transaction.previous_tx_hash == previous_tx_hash:
-                    return transaction
-
-        return None
+        raise NotImplementedError()
