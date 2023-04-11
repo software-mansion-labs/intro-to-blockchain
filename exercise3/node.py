@@ -1,4 +1,3 @@
-from time import time
 from typing import Optional
 
 from exercise2.transaction_registry import Transaction
@@ -7,7 +6,7 @@ from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
-DIFFICULTY = 18  # Oznacza ilość zerowych bitów na początku hasha
+DIFFICULTY = 10  # Oznacza ilość zerowych bitów na początku poszukiwanego hasha
 MAX_256_INT = 2**256
 
 
@@ -25,13 +24,68 @@ class Node:
     def __init__(self, owner_public_key: PublicKey, initial_transaction: Transaction):
         """
         TODO: Przypisz wartości polom owner oraz blockchain przy pomocy podanych argumentów.
-        Wykorzystaj `initial_transaction` do stworzenia blockchain (hash poprzedniego bloku i nonce powinny być zerem).
-
+        Wykorzystaj `initial_transaction` do stworzenia blockchain.
         """
         self.owner = owner_public_key
-        self.blockchain = Blockchain(
-            [Block(b"\x00", int(time()), 0, [initial_transaction])]
+        self.blockchain = Blockchain(initial_transaction)
+
+    def validate_transaction(self, transaction: Transaction) -> bool:
+        """
+        TODO: Sprawdź poprawność transakcji.
+        Transakcja jest poprawna, jeśli:
+        - ma podpis,
+        - podpis jest poprawny (`transaction` jest podpisane przez osobę posiadającą coina),
+        - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
+
+        Do weryfikacji podpisu skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
+
+        Jak sprawdzić, czy coin istnieje?
+        Spróbuj znaleźć transakcję, o hashu takim samym jak hash transakcji, którą chcemy wydać.
+
+        Jak sprawdzić, czy coin nie został wcześniej wydany?
+        Spróbuj znaleźć transakcję, której previous_tx_hash jest taki sam, jak hash transakcji, którą chcemy wydać.
+
+        !! Ważne !!
+        Transakcja, którą chcemy wydać oznacza transakcję poprzednią do tej podanej w argumencie `transaction`.
+        """
+        if transaction.signature is None:
+            return False
+
+        prev_transaction = self.blockchain.get_tx_by_hash(
+            tx_hash=transaction.previous_tx_hash
         )
+        if prev_transaction is None:
+            return False
+
+        if (
+            self.blockchain.get_tx_by_previous_tx_hash(
+                previous_tx_hash=prev_transaction.hash
+            )
+            is not None
+        ):
+            return False
+
+        return verify_signature(
+            prev_transaction.recipient, transaction.signature, transaction.hash
+        )
+
+    def _max_int_shifted_by_difficulty(self):
+        return MAX_256_INT >> DIFFICULTY
+
+    def find_nonce(self, block: Block) -> Optional[Block]:
+        """
+        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
+
+        Jak sprawdzić ilość zer na początku hasha?
+        Porównaj hash zrzutowany na int oraz maksymalną wartość inta 256 przesuniętą bitowo o DIFFICULTY.
+
+        Przydatne operacje:
+        - int.from_bytes(hash, "big")
+        - self._max_int_shifted_by_difficulty()
+        """
+        while int.from_bytes(block.hash(), "big") > self._max_int_shifted_by_difficulty():
+            block.nonce += 1
+        return block
 
     def add_transaction(self, transaction: Transaction):
         """
@@ -49,50 +103,13 @@ class Node:
             recipient=self.owner, previous_tx_hash=b"\x00"
         )
         new_block = Block(
-            prev_block_hash=self.blockchain.get_latest_block().hash,
-            timestamp=int(time()),
+            prev_block_hash=self.blockchain.get_latest_block().hash(),
             nonce=0,
             transactions=[transaction, new_coin_transaction],
         )
 
         new_block = self.find_nonce(new_block)
         self.blockchain.blocks.append(new_block)
-
-    def find_nonce(self, block: Block) -> Optional[Block]:
-        """
-        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
-        """
-        while int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
-            block.nonce += 1
-        return block
-
-    def validate_transaction(self, transaction: Transaction) -> bool:
-        """
-        TODO: Sprawdź poprawność transakcji.
-        Transakcja jest poprawna, jeśli ma podpis, podpis jest poprawny oraz coin,
-        którego chcemy wydać, istnieje i nie został wcześniej wydany.
-        Skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
-        """
-        if transaction.signature is None:
-            return False
-
-        prev_transaction = self.blockchain.get_transaction_by(
-            tx_hash=transaction.previous_tx_hash
-        )
-        if prev_transaction is None:
-            return False
-
-        if (
-            self.blockchain.get_transaction_by(
-                previous_tx_hash=prev_transaction.hash
-            )
-            is not None
-        ):
-            return False
-
-        return verify_signature(
-            prev_transaction.recipient, transaction.signature, transaction.hash
-        )
 
     def get_state(self) -> Blockchain:
         """
@@ -110,7 +127,7 @@ def validate_chain(chain: Blockchain) -> bool:
     - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
     - wszystkie transakcje w bloku są poprawne.
 
-    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny!
+    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
     """
     if len(chain.blocks[0].transactions) != 1:
         return False
@@ -118,13 +135,13 @@ def validate_chain(chain: Blockchain) -> bool:
     honest_node = Node(generate_key_pair()[0], chain.blocks[0].transactions[0])
 
     for index, block in enumerate(chain.blocks[1:]):
-        if block.prev_block_hash != chain.blocks[index].hash:
+        if block.prev_block_hash != chain.blocks[index].hash():
             return False
 
         if block.timestamp < chain.blocks[index].timestamp:
             return False
 
-        if int.from_bytes(block.hash, "big") > MAX_256_INT >> DIFFICULTY:
+        if int.from_bytes(block.hash(), "big") > MAX_256_INT >> DIFFICULTY:
             return False
 
         new_coin_transaction_used = False

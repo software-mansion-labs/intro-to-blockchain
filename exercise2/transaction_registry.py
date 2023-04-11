@@ -13,7 +13,7 @@ class Transaction:
     """
 
     recipient: PublicKey
-    previous_hash: bytes
+    previous_tx_hash: bytes
     hash: bytes
     signature: Optional[bytes]
 
