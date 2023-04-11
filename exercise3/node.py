@@ -6,7 +6,7 @@ from exercise3.blockchain import Blockchain
 from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
-DIFFICULTY = 10  # Oznacza ilość zerowych bitów na początku hasha
+DIFFICULTY = 10  # Oznacza ilość zerowych bitów na początku poszukiwanego hasha
 MAX_256_INT = 2**256
 
 
