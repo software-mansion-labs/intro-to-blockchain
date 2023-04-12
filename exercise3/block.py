@@ -28,7 +28,7 @@ class Block:
         """
         raise NotImplementedError()
 
-    def hash(self):
+    def hash(self) -> bytes:
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
             Hash powinien składać się z wszystkich składowych bloku:

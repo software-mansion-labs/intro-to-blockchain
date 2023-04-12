@@ -41,7 +41,7 @@ class Bob:
     def __init__(self, alice: Alice):
         self.alice = alice
 
-    def validate_signature(self, signature) -> bool:
+    def validate_signature(self, signature: bytes) -> bool:
         """
         TODO: zaimplementuj metodę która weryfikuje czy to Alice podpisała umowę.
             Przydadzą ci się funkcje/metody:
