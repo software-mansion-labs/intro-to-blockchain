@@ -31,10 +31,10 @@ class Node:
     def validate_transaction(self, transaction: Transaction) -> bool:
         """
         TODO: Sprawdź poprawność transakcji.
-        Transakcja jest poprawna, jeśli:
-        - ma podpis,
-        - podpis jest poprawny (`transaction` jest podpisane przez osobę posiadającą coina),
-        - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
+            Transakcja jest poprawna, jeśli:
+            - ma podpis,
+            - podpis jest poprawny (`transaction` jest podpisane przez osobę posiadającą coina),
+            - coin (transakcja), którego chcemy wydać, istnieje i nie został wcześniej wydany.
 
         Do weryfikacji podpisu skorzystaj z funkcji `verify_signature` z modułu simple_cryptography.
 
@@ -68,11 +68,11 @@ class Node:
     def add_transaction(self, transaction: Transaction):
         """
         TODO: Dodaj podaną transakcję do bloku.
-        Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.
-        Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a.
-        Stwórz nowy blok zawierający obie transakcje.
-        Znajdź nonce, który spełni kryteria sieci (użyj metody `find_nonce`).
-        Dodaj blok na koniec łańcucha.
+            Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.
+            Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a.
+            Stwórz nowy blok zawierający obie transakcje.
+            Znajdź nonce, który spełni kryteria sieci (użyj metody `find_nonce`).
+            Dodaj blok na koniec łańcucha.
         """
         raise NotImplementedError()
 
@@ -86,12 +86,12 @@ class Node:
 def validate_chain(chain: Blockchain) -> bool:
     """
     TODO: Zweryfikuj poprawność łańcucha.
-    Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
-    - hash poprzedniego bloku jest przypisany prawidłowo,
-    _ timestamp rośnie razem z numerem bloku,
-    - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
-    - wszystkie transakcje w bloku są poprawne.
+        Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
+        - hash poprzedniego bloku jest przypisany prawidłowo,
+        _ timestamp rośnie razem z numerem bloku,
+        - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
+        - wszystkie transakcje w bloku są poprawne.
 
-    Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
+        Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
     """
     raise NotImplementedError()
