@@ -69,7 +69,7 @@ class Node:
         """
         TODO: Dodaj podaną transakcję do bloku.
             Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.
-            Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a.
+            Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a (previous_tx_hash = b'\x00').
             Stwórz nowy blok zawierający obie transakcje.
             Znajdź nonce, który spełni kryteria sieci (użyj metody `generate_nonce`).
             Dodaj blok na koniec łańcucha.
