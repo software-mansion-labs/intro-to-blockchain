@@ -88,7 +88,7 @@ def validate_chain(chain: Blockchain) -> bool:
     TODO: Zweryfikuj poprawność łańcucha.
         Łańcuch jest poprawny, jeśli dla każdego bloku (poza zerowym):
         - hash poprzedniego bloku jest przypisany prawidłowo,
-        _ timestamp rośnie razem z numerem bloku,
+        _ timestamp nie maleje razem z numerem bloku,
         - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
         - wszystkie transakcje w bloku są poprawne.
 
