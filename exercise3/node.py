@@ -94,6 +94,6 @@ def validate_chain(chain: Blockchain) -> bool:
 
         Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
 
-        Podpowiedź: Dla ułatwienia, możesz skonstruować nowego node'a, na bierząco weryfikując jego poprawność.
+        Podpowiedź: Dla ułatwienia, możesz skonstruować nowego node'a, na bieżąco weryfikując jego poprawność.
     """
     raise NotImplementedError()
