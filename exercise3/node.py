@@ -52,9 +52,9 @@ class Node:
     def _max_int_shifted_by_difficulty(self):
         return MAX_256_INT >> DIFFICULTY
 
-    def find_nonce(self, block: Block) -> Optional[Block]:
+    def generate_nonce(self, block: Block) -> Optional[Block]:
         """
-        TODO: Znajdź nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
+        TODO: Wygeneruj (wykop) nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
 
         Jak sprawdzić ilość zer na początku hasha?
         Porównaj hash zrzutowany na int oraz maksymalną wartość inta 256 przesuniętą bitowo o DIFFICULTY.
@@ -71,7 +71,7 @@ class Node:
             Sprawdź, czy transakcja jest poprawna (użyj metody `validate_transaction`), jeśli nie jest, rzuć wyjątek.
             Stwórz transakcję generującą nowego coin'a, aby wynagrodzić właściciela node'a.
             Stwórz nowy blok zawierający obie transakcje.
-            Znajdź nonce, który spełni kryteria sieci (użyj metody `find_nonce`).
+            Znajdź nonce, który spełni kryteria sieci (użyj metody `generate_nonce`).
             Dodaj blok na koniec łańcucha.
         """
         raise NotImplementedError()
