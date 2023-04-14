@@ -31,7 +31,7 @@ class Block:
     def hash(self) -> bytes:
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
-            Należy obliczyć hasha skonkatenowanych składowych:
+            Hash powinien zostać obliczony ze skonkatenowanych składowych bloku:
             - prev_block_hash
             - timestamp
             - nonce

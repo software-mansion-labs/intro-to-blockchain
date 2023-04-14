@@ -49,8 +49,10 @@ class Node:
         """
         raise NotImplementedError()
 
-    # liczba, która zapisana na 256 bitach ma `DIFFICULTY` zer na początku a potem same jedynki
     def _max_int_shifted_by_difficulty(self):
+        """
+        liczba, która zapisana na 256 bitach ma `DIFFICULTY` zer na początku a potem same jedynki
+        """
         return MAX_256_INT >> DIFFICULTY
 
     def generate_nonce(self, block: Block) -> Block:
