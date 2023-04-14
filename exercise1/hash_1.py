@@ -14,6 +14,6 @@ class Transaction:
         """
         TODO: zaimplementuj funkcję hashującą transakcje, wykorzystując funkcję hash z simple_cryptography.
             Wykorzystaj metodę int.to_bytes(2, 'big') oraz bytes(string, 'utf-8') do konwersji int to bytes.
-            Bytesz można konkatenować.
+            Bytes można konkatenować.
         """
         raise NotImplementedError()
