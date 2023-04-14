@@ -3,7 +3,7 @@ This module is for educational purposes only
 Do not use it as a cryptography library
 """
 from typing import Any, Tuple
-from attr import dataclass
+from dataclasses import dataclass
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
