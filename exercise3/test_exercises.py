@@ -129,7 +129,7 @@ def test_find_nonce():
     node = Node(pub1, init_tx)
 
     block = Block(node.blockchain.get_latest_block().hash(), [], 0)
-    block = node.find_nonce(block)
+    block = node.generate_nonce(block)
 
     assert int.from_bytes(block.hash(), "big") < MAX_256_INT >> DIFFICULTY
 
@@ -215,7 +215,7 @@ def test_validate_chain_with_wrong_transaction():
         transactions=[new_tx, new_coin_transaction],
     )
 
-    new_block = node.find_nonce(new_block)
+    new_block = node.generate_nonce(new_block)
     node.blockchain.blocks.append(new_block)
 
     assert not validate_chain(node.blockchain)
@@ -233,7 +233,7 @@ def test_validate_chain_with_wrong_new_coin_transaction():
         transactions=[new_coin_transaction, new_coin_transaction2],
     )
 
-    new_block = node.find_nonce(new_block)
+    new_block = node.generate_nonce(new_block)
     node.blockchain.blocks.append(new_block)
 
     assert not validate_chain(node.blockchain)

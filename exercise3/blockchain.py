@@ -34,8 +34,8 @@ class Blockchain:
     def get_tx_by_hash(self, tx_hash: bytes) -> Optional[Transaction]:
         """
         TODO: Przy pomocy hasha wyszukaj transakcję.
-        Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
-        Jeśli transakcja o podanym hashu nie istnieje zwróć None.
+            Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
+            Jeśli transakcja o podanym hashu nie istnieje zwróć None.
         """
         raise NotImplementedError()
 
@@ -44,7 +44,7 @@ class Blockchain:
     ) -> Optional[Transaction]:
         """
         TODO: Wyszukaj transakcję o polu previous_tx_hash równym temu podanemu w argumencie.
-        Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
-        Jeśli transakcja z podanym previous_tx_hash nie istnieje zwróć None.
+            Przechodząc po wszystkich blokach i ich transakcjach zwróć pasującą transakcję.
+            Jeśli transakcja z podanym previous_tx_hash nie istnieje zwróć None.
         """
         raise NotImplementedError()

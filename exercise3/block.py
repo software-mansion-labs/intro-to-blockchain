@@ -24,21 +24,21 @@ class Block:
     ):
         """
         TODO: Stwórz blok z podanych argumentów.
-        Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
+            Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
         """
         raise NotImplementedError()
 
-    def hash(self):
+    def hash(self) -> bytes:
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
-        Hash powinien składać się z wszystkich składowych bloku:
-        - prev_block_hash
-        - timestamp
-        - nonce
-        - hasha wszystkich transakcji:
-            - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'0')
-            - przechodząc po wszystkich transakcjach
-            - zaktualizuj hash wszystkich transakcji, hashem aktualnej
-             all_tx_hash = hash(all_tx_hash + current_tx_hash)
+            Hash powinien składać się z wszystkich składowych bloku:
+            - prev_block_hash
+            - timestamp
+            - nonce
+            - hasha wszystkich transakcji:
+                - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'\x00')
+                - przechodząc po wszystkich transakcjach
+                - zaktualizuj hash wszystkich transakcji, hashem aktualnej
+                 all_tx_hash = hash(all_tx_hash + current_tx_hash)
         """
         raise NotImplementedError()

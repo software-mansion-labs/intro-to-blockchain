@@ -24,6 +24,7 @@ def print_balances():
     print(f"Alice's balance: {alice.get_balance(registry)}")
     print(f"Bob's balance: {bob.get_balance(registry)}")
 
+print_balances()
 
 alice.transfer(registry, bob.public_key)
 

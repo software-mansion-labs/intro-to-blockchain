@@ -52,41 +52,41 @@ class TransactionRegistry:
     def get_transaction(self, tx_hash: bytes) -> Optional[Transaction]:
         """
         TODO: Znajdź transakcję z podanym tx_hash.
-        Jeśli w liście transakcji istnieje transakcja z podanym tx_hash, zwróć ją,
-        w przeciwnym przypadku zwróć None.
+            Jeśli w liście transakcji istnieje transakcja z podanym tx_hash, zwróć ją,
+            w przeciwnym przypadku zwróć None.
         """
         raise NotImplementedError()
 
     def is_transaction_available(self, tx_hash: bytes) -> bool:
         """
         TODO: Sprawdź czy transakcja o podanym hashu istnieje i nie została wykorzystana.
-        1.  Sprawdź czy istnieje transakcja o podanym tx_hash, jeśli nie, zwróć False.
-        2.  Przeszukaj listę transakcji w poszukiwaniu transakcji, dla której pole
-            previous_tx_hash jest równe podanemu w argumencie tx_hash. Jeśli taka transakcja
-            istnieje, oznacza to że transakcja o hashu tx_hash zostala już wykorzystana. Zwróć
-            False.
-        3. Jeśli w poprzednich krokach nic nie zwrócono - transakcja jest dostępna, zwróć True.
+            1.  Sprawdź czy istnieje transakcja o podanym tx_hash, jeśli nie, zwróć False.
+            2.  Przeszukaj listę transakcji w poszukiwaniu transakcji, dla której pole
+                previous_tx_hash jest równe podanemu w argumencie tx_hash. Jeśli taka transakcja
+                istnieje, oznacza to że transakcja o hashu tx_hash zostala już wykorzystana. Zwróć
+                False.
+            3. Jeśli w poprzednich krokach nic nie zwrócono - transakcja jest dostępna, zwróć True.
         """
         raise NotImplementedError()
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
         TODO: Zweryfikuj podpis nowej transakcji.
-        1.  Znajdź poprzednią transakcję względem transaction, pole previous_tx_hash z argumentu transaction.
-            Jeśli nie istnieje, zwróć False.
-        2.  Sprawdź czy dana transakcja została podpisana przez właściciela (klucz publiczny) poprzedniej transakcji.
-            Wykorzystaj do tego metodę verify_signature z simple_cryptography.
-        Przypomnienie: podpisywany jest hash transakcji.
+            1.  Znajdź poprzednią transakcję względem transaction, pole previous_tx_hash z argumentu transaction.
+                Jeśli nie istnieje, zwróć False.
+            2.  Sprawdź czy dana transakcja została podpisana przez właściciela (klucz publiczny) poprzedniej transakcji.
+                Wykorzystaj do tego metodę verify_signature z simple_cryptography.
+            Przypomnienie: podpisywany jest hash transakcji.
         """
         raise NotImplementedError()
 
     def add_transaction(self, transaction: Transaction) -> bool:
         """
         TODO: Dodaj nową transakcję do listy transakcji.
-        Przed dodaniem upewnij się, że:
-        1.  Poprzednia transakcja jest niewykorzystana.
-        2.  Podpis transakcji jest prawidlowy.
-        Wykorzystaj do tego dwie metody powyżej.
-        Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
+            Przed dodaniem upewnij się, że:
+            1.  Poprzednia transakcja jest niewykorzystana.
+            2.  Podpis transakcji jest prawidlowy.
+            Wykorzystaj do tego dwie metody powyżej.
+            Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
         """
         raise NotImplementedError()
