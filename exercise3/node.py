@@ -7,7 +7,7 @@ from simple_cryptography import PublicKey, verify_signature, generate_key_pair
 
 # Spróbuj zmodyfikować `DIFFICULTY` i zobacz, jak wpłynie to na czas wydobywania bloku!
 DIFFICULTY = 10  # Oznacza ilość zerowych bitów na początku poszukiwanego hasha
-MAX_256_INT = 2**256
+MAX_256_INT = 2**256 - 1
 
 
 class Node:
@@ -24,7 +24,7 @@ class Node:
     def __init__(self, owner_public_key: PublicKey, initial_transaction: Transaction):
         """
         TODO: Przypisz wartości polom owner oraz blockchain przy pomocy podanych argumentów.
-        Wykorzystaj `initial_transaction` do stworzenia blockchain.
+            Wykorzystaj `initial_transaction` do stworzenia blockchain.
         """
         raise NotImplementedError()
 
@@ -50,9 +50,12 @@ class Node:
         raise NotImplementedError()
 
     def _max_int_shifted_by_difficulty(self):
+        """
+        liczba, która zapisana na 256 bitach ma `DIFFICULTY` zer na początku a potem same jedynki
+        """
         return MAX_256_INT >> DIFFICULTY
 
-    def generate_nonce(self, block: Block) -> Optional[Block]:
+    def generate_nonce(self, block: Block) -> Block:
         """
         TODO: Wygeneruj (wykop) nonce spełniające kryterium -> hash bloku powinien mieć na początku `DIFFICULTY` zer.
 
@@ -90,10 +93,11 @@ def validate_chain(chain: Blockchain) -> bool:
         - hash poprzedniego bloku jest przypisany prawidłowo,
         _ timestamp nie maleje razem z numerem bloku,
         - wykonano proof of work (hash bloku ma na początku `DIFFICULTY` zer),
+        - istnieje maksymalnie jedna transkacja tworząca nowego coina,
         - wszystkie transakcje w bloku są poprawne.
 
-        Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny! (nie będą miały one podpisu)
+        Pamiętaj, że w bloku istnieją transakcje tworzące nowe coiny (nie będą miały one podpisu)!
 
-        Podpowiedź: Dla ułatwienia, możesz skonstruować nowego node'a, na bieżąco weryfikując jego poprawność.
+        Podpowiedź: Dla ułatwienia możesz skonstruować nowego node'a, na bieżąco weryfikując jego poprawność.
     """
     raise NotImplementedError()

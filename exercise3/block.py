@@ -31,14 +31,14 @@ class Block:
     def hash(self) -> bytes:
         """
         TODO: Oblicz hash bloku wykorzystując do tego funkcję `hash` z modułu simple_cryptography.
-            Hash powinien składać się z wszystkich składowych bloku:
+            Hash powinien zostać obliczony ze skonkatenowanych składowych bloku:
             - prev_block_hash
             - timestamp
             - nonce
             - hasha wszystkich transakcji:
                 - stwórz zmienną reprezentującą hash wszystkich transakcji (zainicjalizowaną bajtem zerowym b'\x00')
-                - przechodząc po wszystkich transakcjach
-                - zaktualizuj hash wszystkich transakcji, hashem aktualnej
+                - przechodząc po wszystkich transakcjach, zaktualizuj hash wszystkich transakcji hashem aktualnej
                  all_tx_hash = hash(all_tx_hash + current_tx_hash)
+            Możesz założyć, że zarówno timestamp jak i nonce zajmują maksymalnie 32 bajty.
         """
         raise NotImplementedError()
