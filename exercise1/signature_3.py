@@ -21,6 +21,7 @@ class Alice:
         """
         TODO: wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography.
         """
+        # self._public_key, self._private_key = ?
         raise NotImplementedError()
 
     def sign(self) -> bytes:
